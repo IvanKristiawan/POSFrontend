@@ -87,51 +87,62 @@ const BayarPenjualanStok = () => {
               readOnly: true
             }}
           />
-          <TextField
-            id="outlined-basic"
-            label="Total"
-            variant="outlined"
-            sx={textFieldStyle}
-            value={total}
-            onChange={(e) => setTotal(e.target.value)}
-            InputProps={{
-              readOnly: true
-            }}
-          />
+          <Box sx={hargaContainer}>
+            <Typography sx={{ fontWeight: "600" }}>
+              Total :
+              {total !== 0 &&
+                !isNaN(parseInt(total)) &&
+                ` Rp ${parseInt(total).toLocaleString()}`}
+            </Typography>
+          </Box>
         </Box>
         <Box sx={textFieldBox}>
-          <TextField
-            id="outlined-basic"
-            label="Non Tunai"
-            variant="outlined"
-            sx={textFieldResponsive}
-            value={nonTunai === 0 ? "" : nonTunai}
-            onChange={(e) => setNonTunai(e.target.value)}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Tunai"
-            variant="outlined"
-            sx={textFieldStyle}
-            value={tunai === 0 ? "" : tunai}
-            onChange={(e) => setTunai(e.target.value)}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Kembali"
-            variant="outlined"
-            sx={textFieldStyle}
-            value={
-              !isNaN(parseInt(nonTunai)) &&
-              !isNaN(parseInt(tunai)) &&
-              !isNaN(parseInt(total))
-                ? parseInt(nonTunai) + parseInt(tunai) - parseInt(total)
-                : ""
-            }
-            onChange={(e) => {
-              setKembali(e.target.value);
-            }}
-          />
+          <Box sx={textFieldResponsive}>
+            <Typography sx={hargaText}>
+              Non Tunai :
+              {nonTunai !== 0 &&
+                !isNaN(parseInt(nonTunai)) &&
+                ` Rp ${parseInt(nonTunai).toLocaleString()}`}
+            </Typography>
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
+              size="small"
+              sx={hargaTextField}
+              value={nonTunai === 0 ? "" : nonTunai}
+              onChange={(e) => setNonTunai(e.target.value)}
+            />
+          </Box>
+          <Box sx={hargaContainer}>
+            <Typography sx={hargaText}>
+              Tunai :
+              {tunai !== 0 &&
+                !isNaN(parseInt(tunai)) &&
+                ` Rp ${parseInt(tunai).toLocaleString()}`}
+            </Typography>
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
+              size="small"
+              sx={hargaTextField}
+              value={tunai === 0 ? "" : tunai}
+              onChange={(e) => setTunai(e.target.value)}
+            />
+          </Box>
+          <Box sx={{ marginTop: 4 }}>
+            <Typography sx={{ fontWeight: "600" }}>
+              Kembali :
+              {total !== 0 &&
+                !isNaN(
+                  parseInt(nonTunai) + parseInt(tunai) - parseInt(total)
+                ) &&
+                ` Rp ${(
+                  parseInt(nonTunai) +
+                  parseInt(tunai) -
+                  parseInt(total)
+                ).toLocaleString()}`}
+            </Typography>
+          </Box>
         </Box>
       </Box>
       <Box sx={textFieldStyle}>
@@ -184,7 +195,7 @@ const textFieldStyle = {
 const textFieldResponsive = {
   mt: {
     xs: 4,
-    sm: 0
+    sm: -2
   }
 };
 
@@ -192,4 +203,17 @@ const textFieldBox = {
   display: "flex",
   flex: 1,
   flexDirection: "column"
+};
+
+const hargaContainer = {
+  marginTop: 3
+};
+
+const hargaText = {
+  fontWeight: "500",
+  color: "gray"
+};
+
+const hargaTextField = {
+  display: "flex"
 };

@@ -32,7 +32,6 @@ import {
   TambahAPembelianStok,
   TampilAPembelianStok,
   TampilDaftarPenjualanStok,
-  TambahPenjualanStok,
   TampilPenjualanStok,
   BayarPenjualanStok,
   TambahAPenjualanStok,
@@ -233,10 +232,6 @@ export default function App() {
             <Route
               path="/daftarPenjualanStok"
               element={<TampilDaftarPenjualanStok />}
-            />
-            <Route
-              path="/daftarPenjualanStok/penjualanStok/tambahPenjualanStok"
-              element={<TambahPenjualanStok />}
             />
             <Route
               path="/daftarPenjualanStok/penjualanStok/:id"

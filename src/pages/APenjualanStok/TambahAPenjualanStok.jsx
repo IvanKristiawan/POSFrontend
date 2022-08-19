@@ -117,28 +117,22 @@ const TambahAPenjualanStok = () => {
             onChange={(e) => setQty(e.target.value)}
             sx={textFieldStyle}
           />
-          <TextField
-            id="outlined-basic"
-            label="Harga Satuan"
-            variant="outlined"
-            value={hargaSatuan}
-            onChange={(e) => setHargaSatuan(e.target.value)}
-            sx={textFieldStyle}
-            InputProps={{
-              readOnly: true
-            }}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Total"
-            variant="outlined"
-            value={hargaSatuan * qty}
-            onChange={(e) => setTotal(e.target.value)}
-            sx={textFieldStyle}
-            InputProps={{
-              readOnly: true
-            }}
-          />
+          <Box sx={hargaContainer}>
+            <Typography sx={hargaText}>
+              Harga Satuan :
+              {hargaSatuan !== 0 &&
+                !isNaN(parseInt(hargaSatuan)) &&
+                ` Rp ${parseInt(hargaSatuan).toLocaleString()}`}
+            </Typography>
+          </Box>
+          <Box sx={hargaContainer}>
+            <Typography sx={hargaText}>
+              Total
+              {hargaSatuan * qty !== 0 &&
+                !isNaN(parseInt(hargaSatuan * qty)) &&
+                ` : Rp ${parseInt(hargaSatuan * qty).toLocaleString()}`}
+            </Typography>
+          </Box>
         </Box>
       </Box>
       <Box sx={textFieldStyle}>
@@ -185,4 +179,16 @@ const textFieldWrapper = {
 
 const textFieldStyle = {
   mt: 4
+};
+
+const hargaContainer = {
+  marginTop: 2.5
+};
+
+const hargaText = {
+  fontWeight: "600"
+};
+
+const hargaTextField = {
+  display: "flex"
 };

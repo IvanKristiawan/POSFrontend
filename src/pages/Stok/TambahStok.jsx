@@ -252,22 +252,38 @@ const TambahStok = () => {
             value={konversi}
             onChange={(e) => setKonversi(e.target.value)}
           />
-          <TextField
-            id="outlined-basic"
-            label="Harga Jual Kecil"
-            variant="outlined"
-            sx={textFieldStyle}
-            value={hargaJualKecil}
-            onChange={(e) => setHargaJualKecil(e.target.value)}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Harga Jual Besar"
-            variant="outlined"
-            sx={textFieldStyle}
-            value={hargaJualBesar}
-            onChange={(e) => setHargaJualBesar(e.target.value)}
-          />
+          <Box sx={hargaContainer}>
+            <Typography sx={hargaText}>
+              Harga Jual Kecil
+              {hargaJualKecil !== 0 &&
+                !isNaN(parseInt(hargaJualKecil)) &&
+                ` : Rp ${parseInt(hargaJualKecil).toLocaleString()}`}
+            </Typography>
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
+              size="small"
+              sx={hargaTextField}
+              value={hargaJualKecil}
+              onChange={(e) => setHargaJualKecil(e.target.value)}
+            />
+          </Box>
+          <Box sx={hargaContainer}>
+            <Typography sx={hargaText}>
+              Harga Jual Besar
+              {hargaJualKecil !== 0 &&
+                !isNaN(parseInt(hargaJualBesar)) &&
+                ` : Rp ${parseInt(hargaJualBesar).toLocaleString()}`}
+            </Typography>
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
+              size="small"
+              sx={hargaTextField}
+              value={hargaJualBesar}
+              onChange={(e) => setHargaJualBesar(e.target.value)}
+            />
+          </Box>
         </Box>
       </Box>
       <Box sx={textFieldStyle}>
@@ -344,4 +360,17 @@ const textFieldBox = {
   display: "flex",
   flex: 1,
   flexDirection: "column"
+};
+
+const hargaContainer = {
+  marginTop: 2.5
+};
+
+const hargaText = {
+  fontWeight: "500",
+  color: "gray"
+};
+
+const hargaTextField = {
+  display: "flex"
 };

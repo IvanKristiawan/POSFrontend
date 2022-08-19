@@ -203,12 +203,16 @@ export function ShowTableStok({ currentPosts, searchTerm }) {
                   <>
                     <TableCell>{user.satuanKecil}</TableCell>
                     <TableCell>{user.satuanBesar}</TableCell>
-                    <TableCell>{user.konversi.toLocaleString()}</TableCell>
                     <TableCell>
-                      {user.hargaJualKecil.toLocaleString()}
+                      {user.konversi && user.konversi.toLocaleString()}
                     </TableCell>
                     <TableCell>
-                      {user.hargaJualBesar.toLocaleString()}
+                      {user.hargaJualKecil &&
+                        user.hargaJualKecil.toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      {user.hargaJualBesar &&
+                        user.hargaJualBesar.toLocaleString()}
                     </TableCell>
                     <TableCell>{user.kodeBarcode}</TableCell>
                   </>

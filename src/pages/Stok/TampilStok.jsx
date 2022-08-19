@@ -254,7 +254,7 @@ const TampilStok = () => {
             InputProps={{
               readOnly: true
             }}
-            value={konversi.toLocaleString()}
+            value={konversi && konversi.toLocaleString()}
           />
           <TextField
             id="outlined-basic"
@@ -264,7 +264,7 @@ const TampilStok = () => {
             InputProps={{
               readOnly: true
             }}
-            value={hargaJualKecil.toLocaleString()}
+            value={hargaJualKecil && hargaJualKecil.toLocaleString()}
           />
           <TextField
             id="outlined-basic"
@@ -274,7 +274,7 @@ const TampilStok = () => {
             InputProps={{
               readOnly: true
             }}
-            value={hargaJualBesar.toLocaleString()}
+            value={hargaJualBesar && hargaJualBesar.toLocaleString()}
           />
           <TextField
             id="outlined-basic"

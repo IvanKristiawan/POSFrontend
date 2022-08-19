@@ -109,14 +109,22 @@ const TambahAPembelianStok = () => {
             onChange={(e) => setQty(e.target.value)}
             sx={textFieldStyle}
           />
-          <TextField
-            id="outlined-basic"
-            label="Harga Satuan"
-            variant="outlined"
-            value={hargaSatuan}
-            onChange={(e) => setHargaSatuan(e.target.value)}
-            sx={textFieldStyle}
-          />
+          <Box sx={hargaContainer}>
+            <Typography sx={hargaText}>
+              Harga Satuan
+              {hargaSatuan !== 0 &&
+                !isNaN(parseInt(hargaSatuan)) &&
+                ` : Rp ${parseInt(hargaSatuan).toLocaleString()}`}
+            </Typography>
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
+              size="small"
+              sx={hargaTextField}
+              value={hargaSatuan}
+              onChange={(e) => setHargaSatuan(e.target.value)}
+            />
+          </Box>
           <TextField
             id="outlined-basic"
             label="Potongan"
@@ -125,17 +133,20 @@ const TambahAPembelianStok = () => {
             onChange={(e) => setPotongan(e.target.value)}
             sx={textFieldStyle}
           />
-          <TextField
-            id="outlined-basic"
-            label="Subtotal"
-            variant="outlined"
-            value={hargaSatuan * qty - (hargaSatuan * qty * potongan) / 100}
-            onChange={(e) => setSubTotal(e.target.value)}
-            sx={textFieldStyle}
-            InputProps={{
-              readOnly: true
-            }}
-          />
+          <Box sx={hargaContainer}>
+            <Typography sx={subTotalText}>
+              Subtotal :
+              {hargaSatuan * qty - (hargaSatuan * qty * potongan) / 100 !== 0 &&
+                !isNaN(
+                  parseInt(
+                    hargaSatuan * qty - (hargaSatuan * qty * potongan) / 100
+                  )
+                ) &&
+                ` Rp ${parseInt(
+                  hargaSatuan * qty - (hargaSatuan * qty * potongan) / 100
+                ).toLocaleString()}`}
+            </Typography>
+          </Box>
         </Box>
       </Box>
       <Box sx={textFieldStyle}>
@@ -182,4 +193,21 @@ const textFieldWrapper = {
 
 const textFieldStyle = {
   mt: 4
+};
+
+const hargaContainer = {
+  marginTop: 2.5
+};
+
+const hargaText = {
+  fontWeight: "500",
+  color: "gray"
+};
+
+const hargaTextField = {
+  display: "flex"
+};
+
+const subTotalText = {
+  fontWeight: "600"
 };

@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Box, Typography, Divider, Pagination } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Box, Typography, Divider, Pagination, Button } from "@mui/material";
 import { ShowTableDaftarPenjualanStok } from "../../components/ShowTable";
-import {
-  SearchBar,
-  Loader,
-  usePagination,
-  ButtonModifier
-} from "../../components";
+import { SearchBar, Loader, usePagination } from "../../components";
 import { tempUrl } from "../../contexts/ContextProvider";
 import { useStateContext } from "../../contexts/ContextProvider";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const TampilDaftarPembelianStok = () => {
+  const navigate = useNavigate();
   const { screenSize } = useStateContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [users, setUser] = useState([]);
-  const kode = null;
 
   const [loading, setLoading] = useState(false);
   let [page, setPage] = useState(1);
@@ -56,6 +53,30 @@ const TampilDaftarPembelianStok = () => {
     setLoading(false);
   };
 
+  const saveUser = async (e) => {
+    const today = new Date();
+    const date =
+      ("0" + today.getDate()).slice(-2) +
+      "-" +
+      ("0" + (today.getMonth() + 1)).slice(-2) +
+      "-" +
+      today.getFullYear();
+    try {
+      setLoading(true);
+      const nextPenjualanStok = await axios.get(
+        `${tempUrl}/penjualanStoksCount`
+      );
+      const response = await axios.post(`${tempUrl}/penjualanStoks`, {
+        nomorNota: nextPenjualanStok.data,
+        tanggal: date
+      });
+      setLoading(false);
+      navigate(`/daftarPenjualanStok/penjualanStok/${response.data._id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   if (loading) {
     return <Loader />;
   }
@@ -67,13 +88,16 @@ const TampilDaftarPembelianStok = () => {
         Penjualan Stok
       </Typography>
       <Box sx={buttonModifierContainer}>
-        <ButtonModifier
-          id={"/"}
-          kode={kode}
-          addLink={`/daftarPenjualanStok/penjualanStok/tambahPenjualanStok`}
-          editLink={`/`}
-          deleteUser={"/"}
-        />
+        <Button
+          color="success"
+          variant="contained"
+          sx={{ bgcolor: "success.light", textTransform: "none" }}
+          startIcon={<AddCircleOutlineIcon />}
+          size="small"
+          onClick={saveUser}
+        >
+          Tambah
+        </Button>
       </Box>
       <Divider sx={dividerStyle} />
       <Box sx={searchBarContainer}>

@@ -20,7 +20,6 @@ export { default as TambahAPembelianStok } from "./APembelianStok/TambahAPembeli
 export { default as TampilAPembelianStok } from "./APembelianStok/TampilAPembelianStok";
 // // Penjualan
 export { default as TampilDaftarPenjualanStok } from "./PenjualanStok/TampilDaftarPenjualanStok";
-export { default as TambahPenjualanStok } from "./PenjualanStok/TambahPenjualanStok";
 export { default as TampilPenjualanStok } from "./PenjualanStok/TampilPenjualanStok";
 export { default as BayarPenjualanStok } from "./PenjualanStok/BayarPenjualanStok";
 // A Penjualan
