@@ -16,9 +16,9 @@ import SaveIcon from "@mui/icons-material/Save";
 const TambahAPenjualanStok = () => {
   const { id } = useParams();
   const [kodeStok, setKodeStok] = useState("");
+  const [barcode, setBarcode] = useState("");
   const [qty, setQty] = useState("");
   const [hargaSatuan, setHargaSatuan] = useState("");
-  const [total, setTotal] = useState(0);
   const navigate = useNavigate();
   const [stoks, setStok] = useState([]);
   const [penjualanStoks, setPenjualanStok] = useState([]);
@@ -26,6 +26,10 @@ const TambahAPenjualanStok = () => {
 
   const stokOptions = stoks.map((stok) => ({
     label: `${stok.kodeStok} - ${stok.namaStok}`
+  }));
+
+  const barcodeOptions = stoks.map((stok) => ({
+    label: `${stok.kodeBarcode}`
   }));
 
   useEffect(() => {
@@ -46,8 +50,10 @@ const TambahAPenjualanStok = () => {
 
   const getHargaSatuan = async () => {
     if (kodeStok) {
-      const response = await axios.get(`${tempUrl}/stokByKodeStok/${kodeStok}`);
-      setHargaSatuan(response.data.hargaJualKecil);
+      const response = await axios.get(
+        `${tempUrl}/stokByKodeStok/${kodeStok.split(" ", 1)[0]}`
+      );
+      response.data && setHargaSatuan(response.data.hargaJualKecil);
     } else {
       setHargaSatuan("");
     }
@@ -64,17 +70,36 @@ const TambahAPenjualanStok = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      await axios.post(`${tempUrl}/aPenjualanStoks`, {
-        nomorNota: penjualanStoks.nomorNota,
-        kodeStok,
-        qty,
-        hargaSatuan,
-        total: hargaSatuan * qty
-      });
+      const findByKodeStok = await axios.post(
+        `${tempUrl}/aPenjualanStokByKodeStok`,
+        {
+          nomorNota: penjualanStoks.nomorNota,
+          kodeStok: kodeStok.split(" ", 1)[0]
+        }
+      );
+      if (findByKodeStok.data !== null) {
+        await axios.patch(
+          `${tempUrl}/aPenjualanStoks/${findByKodeStok.data._id}`,
+          {
+            qty: parseInt(findByKodeStok.data.qty) + parseInt(qty),
+            total: parseInt(findByKodeStok.data.total) + hargaSatuan * qty
+          }
+        );
+      } else {
+        await axios.post(`${tempUrl}/aPenjualanStoks`, {
+          nomorNota: penjualanStoks.nomorNota,
+          kodeStok: kodeStok.split(" ", 1)[0],
+          qty,
+          hargaSatuan,
+          total: hargaSatuan * qty
+        });
+      }
       await axios.patch(`${tempUrl}/penjualanStoks/${id}`, {
         total: penjualanStoks.total + hargaSatuan * qty
       });
-      const findStok = stoks.find((stok) => stok.kodeStok === kodeStok);
+      const findStok = stoks.find(
+        (stok) => stok.kodeStok === kodeStok.split(" ", 1)[0]
+      );
       const newQty = parseInt(findStok.qty) - parseInt(qty);
       await axios.patch(`${tempUrl}/stoks/${findStok._id}`, {
         qty: newQty
@@ -106,7 +131,32 @@ const TambahAPenjualanStok = () => {
             renderInput={(params) => (
               <TextField {...params} label="Kode Stok" />
             )}
-            onInputChange={(e, value) => setKodeStok(value.split(" ", 1)[0])}
+            onInputChange={(e, value) => {
+              setKodeStok(value);
+              let findBarcode = stoks.find(
+                (stok) => stok.kodeStok === value.split(" ", 1)[0]
+              );
+              findBarcode && setBarcode(`${findBarcode.kodeBarcode}`);
+            }}
+            value={{ label: kodeStok }}
+            sx={textFieldStyle}
+          />
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={barcodeOptions}
+            renderInput={(params) => <TextField {...params} label="Barcode" />}
+            onInputChange={(e, value) => {
+              setBarcode(value);
+              let findKodeStok = stoks.find(
+                (stok) => stok.kodeBarcode === value
+              );
+              findKodeStok &&
+                setKodeStok(
+                  `${findKodeStok.kodeStok} - ${findKodeStok.namaStok}`
+                );
+            }}
+            value={{ label: barcode }}
             sx={textFieldStyle}
           />
           <TextField
@@ -127,10 +177,10 @@ const TambahAPenjualanStok = () => {
           </Box>
           <Box sx={hargaContainer}>
             <Typography sx={hargaText}>
-              Total
+              Total :
               {hargaSatuan * qty !== 0 &&
                 !isNaN(parseInt(hargaSatuan * qty)) &&
-                ` : Rp ${parseInt(hargaSatuan * qty).toLocaleString()}`}
+                ` Rp ${parseInt(hargaSatuan * qty).toLocaleString()}`}
             </Typography>
           </Box>
         </Box>

@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { Box, TextField, Typography, Divider, Button } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Typography,
+  Divider,
+  Button,
+  ButtonGroup
+} from "@mui/material";
 import { Loader } from "../../components";
 import { tempUrl } from "../../contexts/ContextProvider";
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 const TampilAPenjualanStok = () => {
   const { id, idAPenjualanStok } = useParams();
   const navigate = useNavigate();
+  const [aPenjualanStokId, setAPenjualanStokId] = useState("");
   const [kodeStok, setKodeStok] = useState("");
   const [qty, setQty] = useState("");
   const [hargaSatuan, setHargaSatuan] = useState("");
@@ -43,6 +52,7 @@ const TampilAPenjualanStok = () => {
       const response = await axios.get(
         `${tempUrl}/aPenjualanStoks/${idAPenjualanStok}`
       );
+      setAPenjualanStokId(response.data._id);
       setKodeStok(response.data.kodeStok);
       setQty(response.data.qty);
       setHargaSatuan(response.data.hargaSatuan);
@@ -79,54 +89,43 @@ const TampilAPenjualanStok = () => {
   }
 
   return (
-    <Box sx={{ pt: 10 }}>
+    <Box sx={container}>
       <Typography color="#757575">Transaksi</Typography>
-      <Typography variant="h4" sx={{ fontWeight: "900" }}>
-        Stok Pembelian
+      <Typography variant="h4" sx={subTitleText}>
+        Entry Penjualan Retail
       </Typography>
-      <Box
-        sx={{
-          mt: 4,
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center"
-        }}
-      >
-        <Button
-          variant="contained"
-          color="error"
-          startIcon={<DeleteOutlineIcon />}
-          sx={{ textTransform: "none" }}
-          onClick={() => deleteUser(id)}
-        >
-          Hapus
-        </Button>
+      <Box sx={buttonModifierContainer}>
+        <ButtonGroup variant="contained">
+          <Button
+            color="primary"
+            startIcon={<EditIcon />}
+            sx={buttonStyle}
+            onClick={() => {
+              navigate(
+                `/daftarPenjualanStok/penjualanStok/${id}/${aPenjualanStokId}/edit`
+              );
+            }}
+          >
+            Ubah
+          </Button>
+          <Button
+            color="error"
+            startIcon={<DeleteOutlineIcon />}
+            sx={buttonStyle}
+            onClick={() => deleteUser(id)}
+          >
+            Hapus
+          </Button>
+        </ButtonGroup>
       </Box>
-      <Divider sx={{ pt: 4 }} />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: {
-            xs: "column",
-            sm: "row"
-          }
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flex: 1,
-            flexDirection: "column",
-            maxWidth: {
-              md: "40vw"
-            }
-          }}
-        >
+      <Divider sx={dividerStyle} />
+      <Box sx={textFieldContainer}>
+        <Box sx={textFieldWrapper}>
           <TextField
             id="outlined-basic"
             label="Kode Stok"
             variant="filled"
-            sx={{ display: "flex", mt: 4 }}
+            sx={textFieldStyle}
             InputProps={{
               readOnly: true
             }}
@@ -136,7 +135,7 @@ const TampilAPenjualanStok = () => {
             id="outlined-basic"
             label="Quantity"
             variant="filled"
-            sx={{ display: "flex", mt: 4 }}
+            sx={textFieldStyle}
             InputProps={{
               readOnly: true
             }}
@@ -146,7 +145,7 @@ const TampilAPenjualanStok = () => {
             id="outlined-basic"
             label="Harga Satuan"
             variant="filled"
-            sx={{ display: "flex", mt: 4 }}
+            sx={textFieldStyle}
             InputProps={{
               readOnly: true
             }}
@@ -156,7 +155,7 @@ const TampilAPenjualanStok = () => {
             id="outlined-basic"
             label="Tootal"
             variant="filled"
-            sx={{ display: "flex", mt: 4 }}
+            sx={textFieldStyle}
             InputProps={{
               readOnly: true
             }}
@@ -169,3 +168,48 @@ const TampilAPenjualanStok = () => {
 };
 
 export default TampilAPenjualanStok;
+
+const container = {
+  pt: 10
+};
+
+const subTitleText = {
+  fontWeight: "900"
+};
+
+const buttonModifierContainer = {
+  mt: 4,
+  display: "flex",
+  flexWrap: "wrap",
+  justifyContent: "center"
+};
+
+const buttonStyle = {
+  textTransform: "none"
+};
+
+const dividerStyle = {
+  pt: 4
+};
+
+const textFieldContainer = {
+  display: "flex",
+  flexDirection: {
+    xs: "column",
+    sm: "row"
+  }
+};
+
+const textFieldWrapper = {
+  display: "flex",
+  flex: 1,
+  flexDirection: "column",
+  maxWidth: {
+    md: "40vw"
+  }
+};
+
+const textFieldStyle = {
+  display: "flex",
+  mt: 4
+};

@@ -35,7 +35,8 @@ import {
   TampilPenjualanStok,
   BayarPenjualanStok,
   TambahAPenjualanStok,
-  TampilAPenjualanStok
+  TampilAPenjualanStok,
+  UbahAPenjualanStok
 } from "./pages/index";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -249,6 +250,10 @@ export default function App() {
             <Route
               path="/daftarPenjualanStok/penjualanStok/:id/:idAPenjualanStok"
               element={<TampilAPenjualanStok />}
+            />
+            <Route
+              path="/daftarPenjualanStok/penjualanStok/:id/:idAPenjualanStok/edit"
+              element={<UbahAPenjualanStok />}
             />
           </Routes>
           <Footer />

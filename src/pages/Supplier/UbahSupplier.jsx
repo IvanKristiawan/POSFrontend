@@ -92,7 +92,7 @@ const UbahSupplier = () => {
             onChange={(e) => setAlamat(e.target.value)}
           />
         </Box>
-        <Box sx={{ display: "flex", flex: 1, flexDirection: "column" }}>
+        <Box sx={textFieldBox}>
           <TextField
             id="outlined-basic"
             label="Kota"
@@ -170,4 +170,15 @@ const textFieldStyle = {
   mt: 4
 };
 
-const textFieldResponsive = {};
+const textFieldResponsive = {
+  mt: {
+    xs: 4,
+    sm: 0
+  }
+};
+
+const textFieldBox = {
+  display: "flex",
+  flex: 1,
+  flexDirection: "column"
+};
