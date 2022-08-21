@@ -102,6 +102,9 @@ const UbahUser = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <Typography>
+            *Kosongkan jika tidak ingin mengganti password
+          </Typography>
         </Box>
       </Box>
       <Box sx={spacingTop}>
