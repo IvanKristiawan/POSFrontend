@@ -16,6 +16,7 @@ import SaveIcon from "@mui/icons-material/Save";
 const TambahAPenjualanStok = () => {
   const { id } = useParams();
   const [kodeStok, setKodeStok] = useState("");
+  const [namaStok, setNamaStok] = useState("");
   const [barcode, setBarcode] = useState("");
   const [qty, setQty] = useState("");
   const [hargaSatuan, setHargaSatuan] = useState("");
@@ -68,6 +69,13 @@ const TambahAPenjualanStok = () => {
 
   const saveUser = async (e) => {
     e.preventDefault();
+    let sumNamaStok = "";
+    for (let i = 2; i < 20; i++) {
+      if (!kodeStok.split(" ")[i]) {
+        break;
+      }
+      sumNamaStok += kodeStok.split(" ")[i] + " ";
+    }
     try {
       setLoading(true);
       const findByKodeStok = await axios.post(
@@ -89,6 +97,7 @@ const TambahAPenjualanStok = () => {
         await axios.post(`${tempUrl}/aPenjualanStoks`, {
           nomorNota: penjualanStoks.nomorNota,
           kodeStok: kodeStok.split(" ", 1)[0],
+          namaStok: sumNamaStok,
           qty,
           hargaSatuan,
           total: hargaSatuan * qty

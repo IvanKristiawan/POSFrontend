@@ -5,6 +5,8 @@ import { Box, TextField, Typography, Divider, Button } from "@mui/material";
 import { Loader } from "../../components";
 import { tempUrl } from "../../contexts/ContextProvider";
 import SaveIcon from "@mui/icons-material/Save";
+import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+import jsPDF from "jspdf";
 
 const BayarPenjualanStok = () => {
   const location = useLocation();
@@ -47,11 +49,101 @@ const BayarPenjualanStok = () => {
           ? parseInt(nonTunai) + parseInt(tunai) - parseInt(total)
           : 0
       });
+      downloadPdf(nomorNota, nonTunai, tunai);
       setLoading(false);
-      navigate(`/daftarPenjualanStok/penjualanStok/${response.data._id}`);
+      navigate(`/daftarPenjualanStok`);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const downloadPdf = async (nomorNota, nonTunai, tunai) => {
+    const response = await axios.get(
+      `${tempUrl}/aPenjualanStokByNomorNota/${nomorNota}`
+    );
+    const today = new Date();
+    const now = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Jakarta"
+    });
+    const date =
+      ("0" + today.getDate()).slice(-2) +
+      "-" +
+      ("0" + (today.getMonth() + 1)).slice(-2) +
+      "-" +
+      today.getFullYear();
+    const current = now.split(" ")[1] + " " + now.split(" ")[2];
+    let y = 8;
+    const doc = new jsPDF();
+    doc.setFontSize(8);
+    doc.setDrawColor(101, 101, 101);
+    doc.text(`${date} ${current}`, 6, y);
+    y += 5;
+    doc.text(`${nomorNota}`, 6, y);
+    y += 2;
+    doc.text(`----------------------------------------------`, 6, y);
+    doc.setFontSize(6);
+    for (let i = 0; i < response.data.length; i++) {
+      y += 3;
+      doc.text(`${response.data[i].namaStok}`, 6, y);
+      y += 2;
+      doc.text(
+        `           ${response.data[
+          i
+        ].qty.toLocaleString()}x           ${response.data[
+          i
+        ].hargaSatuan.toLocaleString()}           ${response.data[
+          i
+        ].total.toLocaleString()}`,
+        6,
+        y
+      );
+    }
+    y += 2;
+    doc.text(
+      `-------------------------------------------------------------`,
+      6,
+      y
+    );
+    y += 3;
+    doc.text(
+      `SubTotal           Rp.               ${total.toLocaleString()}`,
+      6,
+      y
+    );
+    y += 3;
+    doc.text(
+      `NonTunai          Rp.               ${parseInt(
+        nonTunai
+      ).toLocaleString()}`,
+      6,
+      y
+    );
+    y += 3;
+    doc.text(
+      `Cash/Tunai       Rp.               ${parseInt(tunai).toLocaleString()}`,
+      6,
+      y
+    );
+    y += 3;
+    doc.text(
+      `Kembali            Rp.               ${(!isNaN(
+        parseInt(nonTunai) + parseInt(tunai) - parseInt(total)
+      )
+        ? parseInt(nonTunai) + parseInt(tunai) - parseInt(total)
+        : 0
+      ).toLocaleString()}`,
+      6,
+      y
+    );
+    y += 3;
+    doc.text(`${response.data.length} ITEM`, 10, y);
+    y += 5;
+    doc.text(`BARANG YANG SUDAH DIBELI`, 11, y);
+    y += 3;
+    doc.text(`TIDAK BISA DIKEMBALIKAN`, 12, y);
+
+    doc.autoPrint({ variant: "non-conform" });
+    doc.save(`nota-${nomorNota}.pdf`);
   };
 
   if (loading) {
@@ -146,8 +238,12 @@ const BayarPenjualanStok = () => {
         </Box>
       </Box>
       <Box sx={textFieldStyle}>
-        <Button variant="contained" startIcon={<SaveIcon />} onClick={saveUser}>
-          Simpan
+        <Button
+          variant="contained"
+          startIcon={<PointOfSaleIcon />}
+          onClick={saveUser}
+        >
+          Bayar
         </Button>
       </Box>
       <Divider sx={dividerStyle} />
