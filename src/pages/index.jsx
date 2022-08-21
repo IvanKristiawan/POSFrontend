@@ -30,3 +30,8 @@ export { default as UbahAPenjualanStok } from "./APenjualanStok/UbahAPenjualanSt
 export { default as Login } from "./Login/Login";
 // Signup
 export { default as Signup } from "./Signup/Signup";
+// User
+export { default as User } from "./User/User";
+export { default as UbahUser } from "./User/UbahUser";
+// Protected Route
+export { default as ProtectedRoute } from "./ProtectedRoute/ProtectedRoute";

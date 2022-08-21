@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { tempUrl } from "../../contexts/ContextProvider";
-import { Loader } from "../../components";
 import {
   Box,
   Typography,
@@ -25,7 +24,6 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const [loadingPage, setLoadingPage] = useState(false);
 
   const { loading, error, dispatch } = useContext(AuthContext);
 
@@ -41,7 +39,6 @@ const Login = () => {
   };
 
   const handleClick = async (e) => {
-    setLoadingPage(true);
     dispatch({ type: "LOGIN_START" });
     try {
       const res = await axios.post(`${tempUrl}/auth/login`, {
@@ -49,17 +46,12 @@ const Login = () => {
         password
       });
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data.details });
-      setLoadingPage(false);
       navigate("/");
     } catch (err) {
       setOpen(true);
       dispatch({ type: "LOGIN_FAILURE", payload: err.response.data });
     }
   };
-
-  if (loadingPage) {
-    return <Loader />;
-  }
 
   return (
     <Box sx={container}>

@@ -489,3 +489,53 @@ export function ShowTablePenjualanStok({ id, currentPosts, stoks, nomorNota }) {
     </TableContainer>
   );
 }
+
+export function ShowTableUser({ currentPosts, searchTerm }) {
+  let navigate = useNavigate();
+  return (
+    <TableContainer component={Paper} sx={{ width: "100%" }}>
+      <Table aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ fontWeight: "bold" }}>Username</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Tipe user</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Kode Nota</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {currentPosts
+            .filter((val) => {
+              if (searchTerm === "") {
+                return val;
+              } else if (
+                val.username.toUpperCase().includes(searchTerm.toUpperCase()) ||
+                val.tipeUser.toUpperCase().includes(searchTerm.toUpperCase()) ||
+                val.kodeNota.toUpperCase().includes(searchTerm.toUpperCase())
+              ) {
+                return val;
+              }
+            })
+            .map((user, index) => (
+              <TableRow
+                key={user._id}
+                sx={{
+                  "&:last-child td, &:last-child th": { border: 0 },
+                  "&:hover": { bgcolor: "#eeeeee" },
+                  cursor: "pointer"
+                }}
+                onClick={() => {
+                  navigate(`/user/${user._id}`);
+                }}
+              >
+                <TableCell component="th" scope="row">
+                  {user.username}
+                </TableCell>
+                <TableCell>{user.tipeUser}</TableCell>
+                <TableCell>{user.kodeNota}</TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}

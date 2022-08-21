@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import React, { useEffect, useContext } from "react";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { AuthContext } from "./contexts/AuthContext";
 import { styled, useTheme } from "@mui/material/styles";
 import MuiAppBar from "@mui/material/AppBar";
 import {
@@ -38,7 +39,10 @@ import {
   TampilAPenjualanStok,
   UbahAPenjualanStok,
   Login,
-  Signup
+  Signup,
+  User,
+  UbahUser,
+  ProtectedRoute
 } from "./pages/index";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -96,6 +100,26 @@ export default function App() {
   const { screenSize, setScreenSize } = useStateContext();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+
+  const SPVRoute = ({ children }) => {
+    const { user } = useContext(AuthContext);
+
+    if (user && user.tipeUser === "SPV") {
+      return children;
+    }
+
+    return <Navigate to="/unauthorized" />;
+  };
+
+  const KSRRoute = ({ children }) => {
+    const { user } = useContext(AuthContext);
+
+    if (user && (user.tipeUser === "KSR" || user.tipeUser === "SPV")) {
+      return children;
+    }
+
+    return <Navigate to="/unauthorized" />;
+  };
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
@@ -182,82 +206,235 @@ export default function App() {
             <Route path="/" />
             {/* Master */}
             {/* Supplier */}
-            <Route path="/supplier" element={<TampilSupplier />} />
+            <Route
+              path="/supplier"
+              element={
+                <SPVRoute>
+                  <TampilSupplier />
+                </SPVRoute>
+              }
+            />
             <Route
               path="/supplier/tambahSupplier"
-              element={<TambahSupplier />}
+              element={
+                <SPVRoute>
+                  <TambahSupplier />
+                </SPVRoute>
+              }
             />
-            <Route path="/supplier/:id" element={<TampilSupplier />} />
-            <Route path="/supplier/:id/edit" element={<UbahSupplier />} />
+            <Route
+              path="/supplier/:id"
+              element={
+                <SPVRoute>
+                  <TampilSupplier />
+                </SPVRoute>
+              }
+            />
+            <Route
+              path="/supplier/:id/edit"
+              element={
+                <SPVRoute>
+                  <UbahSupplier />
+                </SPVRoute>
+              }
+            />
             {/* Group Stok */}
-            <Route path="/groupStok" element={<TampilGroupStok />} />
+            <Route
+              path="/groupStok"
+              element={
+                <SPVRoute>
+                  <TampilGroupStok />
+                </SPVRoute>
+              }
+            />
             <Route
               path="/groupStok/tambahGroupStok"
-              element={<TambahGroupStok />}
+              element={
+                <SPVRoute>
+                  <TambahGroupStok />
+                </SPVRoute>
+              }
             />
-            <Route path="/groupStok/:id" element={<TampilGroupStok />} />
-            <Route path="/groupStok/:id/edit" element={<UbahGroupStok />} />
+            <Route
+              path="/groupStok/:id"
+              element={
+                <SPVRoute>
+                  <TampilGroupStok />
+                </SPVRoute>
+              }
+            />
+            <Route
+              path="/groupStok/:id/edit"
+              element={
+                <SPVRoute>
+                  <UbahGroupStok />
+                </SPVRoute>
+              }
+            />
             {/* Stok */}
-            <Route path="/stok" element={<TampilStok />} />
-            <Route path="/stok/:id" element={<TampilStok />} />
-            <Route path="/stok/:id/edit" element={<UbahStok />} />
-            <Route path="/stok/tambahStok" element={<TambahStok />} />
+            <Route
+              path="/stok"
+              element={
+                <SPVRoute>
+                  <TampilStok />
+                </SPVRoute>
+              }
+            />
+            <Route
+              path="/stok/:id"
+              element={
+                <SPVRoute>
+                  <TampilStok />
+                </SPVRoute>
+              }
+            />
+            <Route
+              path="/stok/:id/edit"
+              element={
+                <SPVRoute>
+                  <UbahStok />
+                </SPVRoute>
+              }
+            />
+            <Route
+              path="/stok/tambahStok"
+              element={
+                <SPVRoute>
+                  <TambahStok />
+                </SPVRoute>
+              }
+            />
             {/* Pembelian Stok */}
             <Route
               path="/daftarPembelianStok"
-              element={<TampilDaftarPembelianStok />}
+              element={
+                <SPVRoute>
+                  <TampilDaftarPembelianStok />
+                </SPVRoute>
+              }
             />
             <Route
               path="/daftarPembelianStok/pembelianStok/tambahPembelianStok"
-              element={<TambahPembelianStok />}
+              element={
+                <SPVRoute>
+                  <TambahPembelianStok />
+                </SPVRoute>
+              }
             />
             <Route
               path="/daftarPembelianStok/pembelianStok/:id"
-              element={<TampilPembelianStok />}
+              element={
+                <SPVRoute>
+                  <TampilPembelianStok />
+                </SPVRoute>
+              }
             />
             <Route
               path="/daftarPembelianStok/pembelianStok/:id/edit"
-              element={<UbahPembelianStok />}
+              element={
+                <SPVRoute>
+                  <UbahPembelianStok />
+                </SPVRoute>
+              }
             />
             {/* A Pembelian Stok */}
             <Route
               path="/daftarPembelianStok/pembelianStok/:id/tambahAPembelianStok"
-              element={<TambahAPembelianStok />}
+              element={
+                <SPVRoute>
+                  <TambahAPembelianStok />
+                </SPVRoute>
+              }
             />
             <Route
               path="/daftarPembelianStok/pembelianStok/:id/:idAPembelianStok"
-              element={<TampilAPembelianStok />}
+              element={
+                <SPVRoute>
+                  <TampilAPembelianStok />
+                </SPVRoute>
+              }
             />
             {/* Penjualan Stok */}
             <Route
               path="/daftarPenjualanStok"
-              element={<TampilDaftarPenjualanStok />}
+              element={
+                <KSRRoute>
+                  <TampilDaftarPenjualanStok />
+                </KSRRoute>
+              }
             />
             <Route
               path="/daftarPenjualanStok/penjualanStok/:id"
-              element={<TampilPenjualanStok />}
+              element={
+                <KSRRoute>
+                  <TampilPenjualanStok />
+                </KSRRoute>
+              }
             />
             <Route
               path="/daftarPenjualanStok/penjualanStok/:id/bayar"
-              element={<BayarPenjualanStok />}
+              element={
+                <KSRRoute>
+                  <BayarPenjualanStok />
+                </KSRRoute>
+              }
             />
             {/* A Penjualan Stok */}
             <Route
               path="/daftarPenjualanStok/penjualanStok/:id/tambahAPenjualanStok"
-              element={<TambahAPenjualanStok />}
+              element={
+                <KSRRoute>
+                  <TambahAPenjualanStok />
+                </KSRRoute>
+              }
             />
             <Route
               path="/daftarPenjualanStok/penjualanStok/:id/:idAPenjualanStok"
-              element={<TampilAPenjualanStok />}
+              element={
+                <KSRRoute>
+                  <TampilAPenjualanStok />
+                </KSRRoute>
+              }
             />
             <Route
               path="/daftarPenjualanStok/penjualanStok/:id/:idAPenjualanStok/edit"
-              element={<UbahAPenjualanStok />}
+              element={
+                <KSRRoute>
+                  <UbahAPenjualanStok />
+                </KSRRoute>
+              }
             />
             {/* Login */}
             <Route path="/login" element={<Login />} />
             {/* Signup */}
             <Route path="/signup" element={<Signup />} />
+            {/* User */}
+            <Route
+              path="/user"
+              element={
+                <SPVRoute>
+                  <User />
+                </SPVRoute>
+              }
+            />
+            <Route
+              path="/user/:id"
+              element={
+                <SPVRoute>
+                  <User />
+                </SPVRoute>
+              }
+            />
+            <Route
+              path="/user/:id/edit"
+              element={
+                <SPVRoute>
+                  <UbahUser />
+                </SPVRoute>
+              }
+            />
+            {/* Not Authorized */}
+            <Route path="/unauthorized" element={<ProtectedRoute />} />
           </Routes>
           <Footer />
         </Main>

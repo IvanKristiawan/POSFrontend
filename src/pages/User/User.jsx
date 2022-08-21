@@ -1,24 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Box, TextField, Typography, Divider, Pagination } from "@mui/material";
-import { ShowTableGroupStok } from "../../components/ShowTable";
 import {
-  SearchBar,
-  Loader,
-  usePagination,
-  ButtonModifier
-} from "../../components";
+  Box,
+  TextField,
+  Typography,
+  Divider,
+  Pagination,
+  Button,
+  ButtonGroup
+} from "@mui/material";
+import { ShowTableUser } from "../../components/ShowTable";
+import { SearchBar, Loader, usePagination } from "../../components";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { tempUrl } from "../../contexts/ContextProvider";
 import { useStateContext } from "../../contexts/ContextProvider";
 
-const TampilGroupStok = () => {
+const User = () => {
+  const { user, dispatch } = useContext(AuthContext);
   const location = useLocation();
   const id = location.pathname.split("/")[2];
   const { screenSize } = useStateContext();
 
-  const [kodeGroup, setKodeGroup] = useState("");
-  const [namaGroup, setNama] = useState("");
+  const [username, setUsername] = useState("");
+  const [tipeUser, setTipeUser] = useState("");
+  const [kodeNota, setKodeNota] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [users, setUser] = useState([]);
   const navigate = useNavigate();
@@ -34,8 +42,9 @@ const TampilGroupStok = () => {
     if (searchTerm === "") {
       return val;
     } else if (
-      val.namaGroup.toUpperCase().includes(searchTerm.toUpperCase()) ||
-      val.kodeGroup.toUpperCase().includes(searchTerm.toUpperCase())
+      val.username.toUpperCase().includes(searchTerm.toUpperCase()) ||
+      val.tipeUser.toUpperCase().includes(searchTerm.toUpperCase()) ||
+      val.kodeNota.toUpperCase().includes(searchTerm.toUpperCase())
     ) {
       return val;
     }
@@ -57,28 +66,42 @@ const TampilGroupStok = () => {
 
   const getUsers = async () => {
     setLoading(true);
-    const response = await axios.get(`${tempUrl}/groupStoks`);
+    const response = await axios.post(`${tempUrl}/users`, {
+      tipeAdmin: user.tipeUser,
+      id: user._id,
+      token: user.token
+    });
     setUser(response.data);
     setLoading(false);
   };
 
   const getUserById = async () => {
     if (id) {
-      const response = await axios.get(`${tempUrl}/groupStoks/${id}`);
-      setKodeGroup(response.data.kodeGroup);
-      setNama(response.data.namaGroup);
+      const response = await axios.post(`${tempUrl}/users/${id}`, {
+        tipeAdmin: user.tipeUser,
+        id: user._id,
+        token: user.token
+      });
+      setUsername(response.data.username);
+      setTipeUser(response.data.tipeUser);
+      setKodeNota(response.data.kodeNota);
     }
   };
 
   const deleteUser = async (id) => {
     try {
       setLoading(true);
-      await axios.delete(`${tempUrl}/groupStoks/${id}`);
+      await axios.post(`${tempUrl}/users/deleteUser/${id}`, {
+        tipeAdmin: user.tipeUser,
+        id: user._id,
+        token: user.token
+      });
       getUsers();
-      setKodeGroup("");
-      setNama("");
+      setUsername("");
+      setTipeUser("");
+      setKodeNota("");
       setLoading(false);
-      navigate("/groupStok");
+      navigate("/user");
     } catch (error) {
       console.log(error);
     }
@@ -90,41 +113,66 @@ const TampilGroupStok = () => {
 
   return (
     <Box sx={container}>
-      <Typography color="#757575">Master</Typography>
+      <Typography color="#757575">User</Typography>
       <Typography variant="h4" sx={subTitleText}>
-        Group Stok
+        Daftar User
       </Typography>
-      <Box sx={buttonModifierContainer}>
-        <ButtonModifier
-          id={id}
-          kode={kodeGroup}
-          addLink={`/groupStok/tambahGroupStok`}
-          editLink={`/groupStok/${id}/edit`}
-          deleteUser={deleteUser}
-        />
-      </Box>
+      {id && (
+        <Box sx={buttonModifierContainer}>
+          <ButtonGroup variant="contained">
+            <Button
+              color="primary"
+              startIcon={<EditIcon />}
+              sx={{ textTransform: "none" }}
+              onClick={() => {
+                navigate(`/user/${id}/edit`);
+              }}
+            >
+              Ubah
+            </Button>
+            <Button
+              color="error"
+              startIcon={<DeleteOutlineIcon />}
+              sx={{ textTransform: "none" }}
+              onClick={() => deleteUser(id)}
+            >
+              Hapus
+            </Button>
+          </ButtonGroup>
+        </Box>
+      )}
       <Divider sx={dividerStyle} />
       <Box sx={showDataContainer}>
         <Box sx={showDataWrapper}>
           <TextField
             id="outlined-basic"
-            label="Kode"
+            label="Username"
             variant="filled"
             sx={textFieldStyle}
             InputProps={{
               readOnly: true
             }}
-            value={kodeGroup}
+            value={username}
           />
           <TextField
             id="outlined-basic"
-            label="Nama Group Stok"
+            label="Tipe User"
             variant="filled"
             sx={textFieldStyle}
             InputProps={{
               readOnly: true
             }}
-            value={namaGroup}
+            value={tipeUser}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Kode Nota"
+            variant="filled"
+            sx={textFieldStyle}
+            InputProps={{
+              readOnly: true
+            }}
+            value={kodeNota}
           />
         </Box>
       </Box>
@@ -133,10 +181,7 @@ const TampilGroupStok = () => {
         <SearchBar setSearchTerm={setSearchTerm} />
       </Box>
       <Box sx={tableContainer}>
-        <ShowTableGroupStok
-          currentPosts={currentPosts}
-          searchTerm={searchTerm}
-        />
+        <ShowTableUser currentPosts={currentPosts} searchTerm={searchTerm} />
       </Box>
       <Box sx={tableContainer}>
         <Pagination
@@ -151,7 +196,7 @@ const TampilGroupStok = () => {
   );
 };
 
-export default TampilGroupStok;
+export default User;
 
 const container = {
   pt: 10

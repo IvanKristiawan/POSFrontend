@@ -18,11 +18,18 @@ import DnsIcon from "@mui/icons-material/Dns";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import SellIcon from "@mui/icons-material/Sell";
-import EqualizerIcon from "@mui/icons-material/Equalizer";
+import PersonIcon from "@mui/icons-material/Person";
+import LockIcon from "@mui/icons-material/Lock";
+import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 
 function SidebarMenu() {
+  const [openUtility, setOpenUtility] = React.useState(false);
   const [openMaster, setOpenMaster] = React.useState(false);
   const [openTransaksi, setOpenTransaksi] = React.useState(false);
+
+  const handleClickUtility = () => {
+    setOpenUtility(!openUtility);
+  };
 
   const handleClickMaster = () => {
     setOpenMaster(!openMaster);
@@ -33,16 +40,32 @@ function SidebarMenu() {
   };
 
   return (
-    <ListItem key={"Test"} disablePadding sx={{ display: "block" }}>
+    <ListItem key={"Test"} disablePadding sx={container}>
       {/* Performa Button */}
-      <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-        <ListItemButton>
-          <ListItemIcon>
-            <EqualizerIcon />
-          </ListItemIcon>
-          <ListItemText primary="Performa" />
-        </ListItemButton>
-      </Link>
+      <ListItemButton onClick={handleClickUtility}>
+        <ListItemIcon>
+          <LockIcon />
+        </ListItemIcon>
+        <ListItemText primary="Utility" />
+        {openUtility ? (
+          <ExpandLess color="primary" />
+        ) : (
+          <ExpandMore color="primary" />
+        )}
+      </ListItemButton>
+      <Collapse in={openUtility} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          <Link to="/user" style={linkText}>
+            <ListItemButton sx={listItemButtonStyle}>
+              <ListItemIcon>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText primary="User" />
+            </ListItemButton>
+          </Link>
+        </List>
+      </Collapse>
+
       <Divider />
       {/* Master Button */}
       <ListItemButton onClick={handleClickMaster}>
@@ -58,30 +81,24 @@ function SidebarMenu() {
       </ListItemButton>
       <Collapse in={openMaster} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <Link
-            to="/supplier"
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            <ListItemButton sx={{ pl: 4 }}>
+          <Link to="/supplier" style={linkText}>
+            <ListItemButton sx={listItemButtonStyle}>
               <ListItemIcon>
                 <AssignmentIcon />
               </ListItemIcon>
               <ListItemText primary="Supplier" />
             </ListItemButton>
           </Link>
-          <Link
-            to="/groupStok"
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            <ListItemButton sx={{ pl: 4 }}>
+          <Link to="/groupStok" style={linkText}>
+            <ListItemButton sx={listItemButtonStyle}>
               <ListItemIcon>
                 <BallotIcon />
               </ListItemIcon>
               <ListItemText primary="Group Stok" />
             </ListItemButton>
           </Link>
-          <Link to="/stok" style={{ textDecoration: "none", color: "inherit" }}>
-            <ListItemButton sx={{ pl: 4 }}>
+          <Link to="/stok" style={linkText}>
+            <ListItemButton sx={listItemButtonStyle}>
               <ListItemIcon>
                 <DnsIcon />
               </ListItemIcon>
@@ -107,24 +124,18 @@ function SidebarMenu() {
       </ListItemButton>
       <Collapse in={openTransaksi} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <Link
-            to="/daftarPembelianStok"
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            <ListItemButton sx={{ pl: 4 }}>
+          <Link to="/daftarPembelianStok" style={linkText}>
+            <ListItemButton sx={listItemButtonStyle}>
               <ListItemIcon>
                 <LocalMallIcon />
               </ListItemIcon>
               <ListItemText primary="Pembelian Stok" />
             </ListItemButton>
           </Link>
-          <Link
-            to="/daftarPenjualanStok"
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            <ListItemButton sx={{ pl: 4 }}>
+          <Link to="/daftarPenjualanStok" style={linkText}>
+            <ListItemButton sx={listItemButtonStyle}>
               <ListItemIcon>
-                <SellIcon />
+                <PointOfSaleIcon />
               </ListItemIcon>
               <ListItemText primary="Penjualan Stok" />
             </ListItemButton>
@@ -136,3 +147,16 @@ function SidebarMenu() {
 }
 
 export default SidebarMenu;
+
+const container = {
+  display: "block"
+};
+
+const linkText = {
+  textDecoration: "none",
+  color: "inherit"
+};
+
+const listItemButtonStyle = {
+  pl: 4
+};
