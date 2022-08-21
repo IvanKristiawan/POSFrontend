@@ -26,3 +26,7 @@ export { default as BayarPenjualanStok } from "./PenjualanStok/BayarPenjualanSto
 export { default as TambahAPenjualanStok } from "./APenjualanStok/TambahAPenjualanStok";
 export { default as TampilAPenjualanStok } from "./APenjualanStok/TampilAPenjualanStok";
 export { default as UbahAPenjualanStok } from "./APenjualanStok/UbahAPenjualanStok";
+// Login
+export { default as Login } from "./Login/Login";
+// Signup
+export { default as Signup } from "./Signup/Signup";

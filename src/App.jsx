@@ -36,7 +36,9 @@ import {
   BayarPenjualanStok,
   TambahAPenjualanStok,
   TampilAPenjualanStok,
-  UbahAPenjualanStok
+  UbahAPenjualanStok,
+  Login,
+  Signup
 } from "./pages/index";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -122,10 +124,10 @@ export default function App() {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={container}>
       <BrowserRouter>
         <CssBaseline />
-        <AppBar position="fixed" open={open} sx={{ bgcolor: "primary.main" }}>
+        <AppBar position="fixed" open={open} sx={appBarContainer}>
           <Toolbar>
             <Tooltip title="Menu">
               <IconButton
@@ -156,12 +158,9 @@ export default function App() {
           <DrawerHeader>
             {theme.direction === "ltr" ? (
               <>
-                <Box sx={{ display: "flex", mr: "auto" }}>
-                  <GpsFixedIcon sx={{ my: "auto" }} />
-                  <Typography
-                    variant="h6"
-                    sx={{ my: "auto", ml: 2, fontWeight: "bold" }}
-                  >
+                <Box sx={brandIconContainer}>
+                  <GpsFixedIcon sx={brandIcon} />
+                  <Typography variant="h6" sx={brandIconText}>
                     POS
                   </Typography>
                 </Box>
@@ -178,7 +177,7 @@ export default function App() {
             <SidebarMenu />
           </List>
         </Drawer>
-        <Main open={open} sx={{ bgcolor: "#fafafa", minHeight: "100vh" }}>
+        <Main open={open} sx={mainContainer}>
           <Routes>
             <Route path="/" />
             {/* Master */}
@@ -255,6 +254,10 @@ export default function App() {
               path="/daftarPenjualanStok/penjualanStok/:id/:idAPenjualanStok/edit"
               element={<UbahAPenjualanStok />}
             />
+            {/* Login */}
+            <Route path="/login" element={<Login />} />
+            {/* Signup */}
+            <Route path="/signup" element={<Signup />} />
           </Routes>
           <Footer />
         </Main>
@@ -262,3 +265,31 @@ export default function App() {
     </Box>
   );
 }
+
+const container = {
+  display: "flex"
+};
+
+const appBarContainer = {
+  bgcolor: "primary.main"
+};
+
+const brandIconContainer = {
+  display: "flex",
+  mr: "auto"
+};
+
+const brandIcon = {
+  my: "auto"
+};
+
+const brandIconText = {
+  my: "auto",
+  ml: 2,
+  fontWeight: "bold"
+};
+
+const mainContainer = {
+  bgcolor: "#fafafa",
+  minHeight: "100vh"
+};
