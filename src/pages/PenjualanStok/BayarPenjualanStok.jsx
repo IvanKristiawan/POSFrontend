@@ -52,7 +52,7 @@ const BayarPenjualanStok = () => {
       });
       downloadPdf(nomorNota, nonTunai, tunai);
       setLoading(false);
-      navigate(`/daftarPenjualanStok`);
+      navigate(`/`);
     } catch (error) {
       console.log(error);
     }

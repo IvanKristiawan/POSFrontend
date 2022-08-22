@@ -1,4 +1,6 @@
-import * as React from "react";
+import React, { useContext } from "react";
+import axios from "axios";
+import { AuthContext } from "../contexts/AuthContext";
 import {
   List,
   ListItemButton,
@@ -8,7 +10,8 @@ import {
   ListItem,
   Divider
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { tempUrl } from "../contexts/ContextProvider";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import KeyIcon from "@mui/icons-material/Key";
@@ -17,12 +20,13 @@ import BallotIcon from "@mui/icons-material/Ballot";
 import DnsIcon from "@mui/icons-material/Dns";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
-import SellIcon from "@mui/icons-material/Sell";
 import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 
 function SidebarMenu() {
+  const navigate = useNavigate();
+  const { user, dispatch } = useContext(AuthContext);
   const [openUtility, setOpenUtility] = React.useState(false);
   const [openMaster, setOpenMaster] = React.useState(false);
   const [openTransaksi, setOpenTransaksi] = React.useState(false);
@@ -37,6 +41,30 @@ function SidebarMenu() {
 
   const handleClickTransaksi = () => {
     setOpenTransaksi(!openTransaksi);
+  };
+
+  const newPenjualanStokKSR = async () => {
+    if (user && user.tipeUser === "KSR") {
+      const today = new Date();
+      const date =
+        ("0" + today.getDate()).slice(-2) +
+        "-" +
+        ("0" + (today.getMonth() + 1)).slice(-2) +
+        "-" +
+        today.getFullYear();
+      try {
+        const nextPenjualanStok = await axios.get(
+          `${tempUrl}/penjualanStoksCount`
+        );
+        const response = await axios.post(`${tempUrl}/penjualanStoks`, {
+          nomorNota: nextPenjualanStok.data,
+          tanggal: date
+        });
+        navigate(`/daftarPenjualanStok/penjualanStok/${response.data._id}`);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   return (
@@ -132,14 +160,29 @@ function SidebarMenu() {
               <ListItemText primary="Pembelian Stok" />
             </ListItemButton>
           </Link>
-          <Link to="/daftarPenjualanStok" style={linkText}>
-            <ListItemButton sx={listItemButtonStyle}>
-              <ListItemIcon>
-                <PointOfSaleIcon />
-              </ListItemIcon>
-              <ListItemText primary="Penjualan Stok" />
-            </ListItemButton>
-          </Link>
+          {user && user.tipeUser === "KSR" ? (
+            <Link to="/" style={linkText} onClick={() => newPenjualanStokKSR()}>
+              <ListItemButton sx={listItemButtonStyle}>
+                <ListItemIcon>
+                  <PointOfSaleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Penjualan Stok" />
+              </ListItemButton>
+            </Link>
+          ) : (
+            <Link
+              to="/daftarPenjualanStok"
+              style={linkText}
+              onClick={() => newPenjualanStokKSR()}
+            >
+              <ListItemButton sx={listItemButtonStyle}>
+                <ListItemIcon>
+                  <PointOfSaleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Penjualan Stok" />
+              </ListItemButton>
+            </Link>
+          )}
         </List>
       </Collapse>
     </ListItem>

@@ -98,7 +98,7 @@ const TampilPenjualanStok = () => {
       }
       await axios.delete(`${tempUrl}/penjualanStoks/${id}`);
       setLoading(false);
-      navigate("/daftarPenjualanStok");
+      navigate("/");
     } catch (error) {
       console.log(error);
     }
