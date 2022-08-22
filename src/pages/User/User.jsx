@@ -12,11 +12,12 @@ import {
   ButtonGroup
 } from "@mui/material";
 import { ShowTableUser } from "../../components/ShowTable";
-import { SearchBar, Loader, usePagination } from "../../components";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { tempUrl } from "../../contexts/ContextProvider";
 import { useStateContext } from "../../contexts/ContextProvider";
+import { SearchBar, Loader, usePagination } from "../../components";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 const User = () => {
   const { user, dispatch } = useContext(AuthContext);
@@ -117,30 +118,44 @@ const User = () => {
       <Typography variant="h4" sx={subTitleText}>
         Daftar User
       </Typography>
-      {id && (
-        <Box sx={buttonModifierContainer}>
-          <ButtonGroup variant="contained">
-            <Button
-              color="primary"
-              startIcon={<EditIcon />}
-              sx={{ textTransform: "none" }}
-              onClick={() => {
-                navigate(`/user/${id}/edit`);
-              }}
-            >
-              Ubah
-            </Button>
-            <Button
-              color="error"
-              startIcon={<DeleteOutlineIcon />}
-              sx={{ textTransform: "none" }}
-              onClick={() => deleteUser(id)}
-            >
-              Hapus
-            </Button>
-          </ButtonGroup>
-        </Box>
-      )}
+      <Box sx={buttonModifierContainer}>
+        <Button
+          variant="contained"
+          color="success"
+          sx={{ bgcolor: "success.light", textTransform: "none" }}
+          startIcon={<AddCircleOutlineIcon />}
+          size="small"
+          onClick={() => {
+            navigate(`/tambahUser`);
+          }}
+        >
+          Tambah
+        </Button>
+        {id && (
+          <>
+            <ButtonGroup variant="contained">
+              <Button
+                color="primary"
+                startIcon={<EditIcon />}
+                sx={{ textTransform: "none" }}
+                onClick={() => {
+                  navigate(`/user/${id}/edit`);
+                }}
+              >
+                Ubah
+              </Button>
+              <Button
+                color="error"
+                startIcon={<DeleteOutlineIcon />}
+                sx={{ textTransform: "none" }}
+                onClick={() => deleteUser(id)}
+              >
+                Hapus
+              </Button>
+            </ButtonGroup>
+          </>
+        )}
+      </Box>
       <Divider sx={dividerStyle} />
       <Box sx={showDataContainer}>
         <Box sx={showDataWrapper}>

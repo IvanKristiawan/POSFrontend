@@ -39,9 +39,9 @@ import {
   TampilAPenjualanStok,
   UbahAPenjualanStok,
   Login,
-  Signup,
   User,
   UbahUser,
+  TambahUser,
   ProfilUser,
   UbahProfilUser,
   ProtectedRoute
@@ -99,6 +99,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 export default function App() {
+  const { user } = useContext(AuthContext);
   const { screenSize, setScreenSize } = useStateContext();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -199,9 +200,7 @@ export default function App() {
             )}
           </DrawerHeader>
           <Divider />
-          <List>
-            <SidebarMenu />
-          </List>
+          <List>{user && <SidebarMenu />}</List>
         </Drawer>
         <Main open={open} sx={mainContainer}>
           <Routes>
@@ -408,8 +407,6 @@ export default function App() {
             />
             {/* Login */}
             <Route path="/login" element={<Login />} />
-            {/* Signup */}
-            <Route path="/signup" element={<Signup />} />
             {/* Profil User */}
             <Route
               path="/profilUser"
@@ -449,6 +446,14 @@ export default function App() {
               element={
                 <SPVRoute>
                   <UbahUser />
+                </SPVRoute>
+              }
+            />
+            <Route
+              path="/tambahUser"
+              element={
+                <SPVRoute>
+                  <TambahUser />
                 </SPVRoute>
               }
             />

@@ -51,14 +51,9 @@ function ProfileUser() {
         </Stack>
       ) : (
         <Box direction="row" spacing={1} sx={containerButtonGroup}>
-          <ButtonGroup variant="text" aria-label="text button group">
-            <Button sx={buttonUser} onClick={loginButtonHandler}>
-              Login
-            </Button>
-            <Button sx={buttonUser} onClick={signupButtonHandler}>
-              Sign up
-            </Button>
-          </ButtonGroup>
+          <Button sx={buttonUser} onClick={loginButtonHandler}>
+            Login
+          </Button>
         </Box>
       )}
     </>
@@ -84,6 +79,7 @@ const containerButtonGroup = {
 
 const buttonUser = {
   transition: "0.3s",
+  padding: 0,
   "&:hover": { backgroundColor: "#90caf9", color: "black" }
 };
 

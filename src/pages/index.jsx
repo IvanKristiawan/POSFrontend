@@ -28,11 +28,10 @@ export { default as TampilAPenjualanStok } from "./APenjualanStok/TampilAPenjual
 export { default as UbahAPenjualanStok } from "./APenjualanStok/UbahAPenjualanStok";
 // Login
 export { default as Login } from "./Login/Login";
-// Signup
-export { default as Signup } from "./Signup/Signup";
 // User
 export { default as User } from "./User/User";
 export { default as UbahUser } from "./User/UbahUser";
+export { default as TambahUser } from "./User/TambahUser";
 // Profil User
 export { default as ProfilUser } from "./ProfilUser/ProfilUser";
 export { default as UbahProfilUser } from "./ProfilUser/UbahProfilUser";

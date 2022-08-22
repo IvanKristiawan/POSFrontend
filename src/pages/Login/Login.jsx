@@ -34,10 +34,6 @@ const Login = () => {
     setOpen(false);
   };
 
-  const signupButtonHandler = () => {
-    navigate("/signup");
-  };
-
   const handleClick = async (e) => {
     dispatch({ type: "LOGIN_START" });
     try {
@@ -96,12 +92,6 @@ const Login = () => {
           <Button type="submit" variant="contained">
             Login
           </Button>
-          <Box sx={daftarContainer}>
-            <Typography>Belum ada akun?</Typography>
-            <Typography sx={daftarStyle} onClick={signupButtonHandler}>
-              Daftar
-            </Typography>
-          </Box>
         </Box>
         {error && (
           <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
@@ -150,18 +140,6 @@ const showDataWrapper = {
 
 const spacingTop = {
   mt: 4
-};
-
-const daftarContainer = {
-  display: "flex",
-  marginTop: 1
-};
-
-const daftarStyle = {
-  marginLeft: 0.5,
-  color: "blue",
-  cursor: "pointer",
-  "&:hover": { fontWeight: "600", textDecoration: "underline" }
 };
 
 const alertBox = {

@@ -9,10 +9,6 @@ const ProtectedRoute = () => {
     navigate("/login");
   };
 
-  const signupButtonHandler = () => {
-    navigate("/signup");
-  };
-
   return (
     <Box sx={container}>
       <Alert severity="error">Maaf Anda tidak memiliki akses!</Alert>
@@ -20,12 +16,6 @@ const ProtectedRoute = () => {
         <Typography>Login dengan akun yang terotorisasi!</Typography>
         <Typography sx={daftarStyle} onClick={loginButtonHandler}>
           Login
-        </Typography>
-      </Box>
-      <Box sx={alternativeContainer}>
-        <Typography>Belum ada akun?</Typography>
-        <Typography sx={daftarStyle} onClick={signupButtonHandler}>
-          Daftar
         </Typography>
       </Box>
     </Box>
