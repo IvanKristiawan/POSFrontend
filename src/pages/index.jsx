@@ -33,5 +33,8 @@ export { default as Signup } from "./Signup/Signup";
 // User
 export { default as User } from "./User/User";
 export { default as UbahUser } from "./User/UbahUser";
+// Profil User
+export { default as ProfilUser } from "./ProfilUser/ProfilUser";
+export { default as UbahProfilUser } from "./ProfilUser/UbahProfilUser";
 // Protected Route
 export { default as ProtectedRoute } from "./ProtectedRoute/ProtectedRoute";

@@ -23,6 +23,7 @@ import LocalMallIcon from "@mui/icons-material/LocalMall";
 import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+import ListAltIcon from "@mui/icons-material/ListAlt";
 
 function SidebarMenu() {
   const navigate = useNavigate();
@@ -83,12 +84,20 @@ function SidebarMenu() {
       </ListItemButton>
       <Collapse in={openUtility} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <Link to="/user" style={linkText}>
+          <Link to="/profilUser" style={linkText}>
             <ListItemButton sx={listItemButtonStyle}>
               <ListItemIcon>
                 <PersonIcon />
               </ListItemIcon>
-              <ListItemText primary="User" />
+              <ListItemText primary="Profil User" />
+            </ListItemButton>
+          </Link>
+          <Link to="/user" style={linkText}>
+            <ListItemButton sx={listItemButtonStyle}>
+              <ListItemIcon>
+                <ListAltIcon />
+              </ListItemIcon>
+              <ListItemText primary="Daftar User" />
             </ListItemButton>
           </Link>
         </List>
@@ -170,11 +179,7 @@ function SidebarMenu() {
               </ListItemButton>
             </Link>
           ) : (
-            <Link
-              to="/daftarPenjualanStok"
-              style={linkText}
-              onClick={() => newPenjualanStokKSR()}
-            >
+            <Link to="/daftarPenjualanStok" style={linkText}>
               <ListItemButton sx={listItemButtonStyle}>
                 <ListItemIcon>
                   <PointOfSaleIcon />

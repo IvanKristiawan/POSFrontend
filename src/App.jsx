@@ -42,6 +42,8 @@ import {
   Signup,
   User,
   UbahUser,
+  ProfilUser,
+  UbahProfilUser,
   ProtectedRoute
 } from "./pages/index";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -408,6 +410,23 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             {/* Signup */}
             <Route path="/signup" element={<Signup />} />
+            {/* Profil User */}
+            <Route
+              path="/profilUser"
+              element={
+                <KSRRoute>
+                  <ProfilUser />
+                </KSRRoute>
+              }
+            />
+            <Route
+              path="/profilUser/:id/edit"
+              element={
+                <KSRRoute>
+                  <UbahProfilUser />
+                </KSRRoute>
+              }
+            />
             {/* User */}
             <Route
               path="/user"
