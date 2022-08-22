@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Box, Typography, Divider, Pagination, Button } from "@mui/material";
+import { useNavigate, Link } from "react-router-dom";
+import {
+  Box,
+  Typography,
+  Divider,
+  Pagination,
+  Button,
+  Alert
+} from "@mui/material";
 import { ShowTableDaftarPenjualanStok } from "../../components/ShowTable";
 import { SearchBar, Loader, usePagination } from "../../components";
 import { tempUrl } from "../../contexts/ContextProvider";
@@ -118,6 +125,17 @@ const TampilDaftarPembelianStok = () => {
           size={screenSize <= 600 ? "small" : "large"}
         />
       </Box>
+      <a
+        href="https://drive.google.com/drive/folders/1jHiMOXuvMWxZ7HRs3TGdXX7f7uFkmD4T?usp=sharing"
+        style={alertAStyle}
+      >
+        <Alert severity="info" sx={alertContainer}>
+          <Box sx={alertWrapper}>
+            <Typography>Lihat Tutorial Cara Pemakaian</Typography>
+            <Typography sx={alertLinkText}>disini!</Typography>
+          </Box>
+        </Alert>
+      </a>
     </Box>
   );
 };
@@ -153,4 +171,23 @@ const tableContainer = {
   pt: 4,
   display: "flex",
   justifyContent: "center"
+};
+
+const alertAStyle = {
+  textDecoration: "none",
+  cursor: "pointer"
+};
+
+const alertContainer = {
+  marginTop: 4
+};
+
+const alertWrapper = {
+  display: "flex"
+};
+
+const alertLinkText = {
+  textDecoration: "underline",
+  marginLeft: 0.5,
+  "&:hover": { fontWeight: "600" }
 };

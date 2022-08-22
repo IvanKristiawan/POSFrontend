@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Box, TextField, Typography, Divider, Button } from "@mui/material";
 import { Loader } from "../../components";
 import { tempUrl } from "../../contexts/ContextProvider";
-import SaveIcon from "@mui/icons-material/Save";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import jsPDF from "jspdf";
 
 const BayarPenjualanStok = () => {
+  const { user, dispatch } = useContext(AuthContext);
   const location = useLocation();
   const id = location.pathname.split("/")[3];
   const [loading, setLoading] = useState(false);
@@ -78,7 +79,7 @@ const BayarPenjualanStok = () => {
     doc.setDrawColor(101, 101, 101);
     doc.text(`${date} ${current}`, 6, y);
     y += 5;
-    doc.text(`${nomorNota}`, 6, y);
+    doc.text(`${nomorNota}/${user.kodeNota}`, 6, y);
     y += 2;
     doc.text(`----------------------------------------------`, 6, y);
     doc.setFontSize(6);
