@@ -70,7 +70,7 @@ function SidebarMenu() {
 
   return (
     <ListItem key={"Test"} disablePadding sx={container}>
-      {/* Performa Button */}
+      {/* Utility Button */}
       <ListItemButton onClick={handleClickUtility}>
         <ListItemIcon>
           <LockIcon />
@@ -92,58 +92,64 @@ function SidebarMenu() {
               <ListItemText primary="Profil User" />
             </ListItemButton>
           </Link>
-          <Link to="/user" style={linkText}>
-            <ListItemButton sx={listItemButtonStyle}>
-              <ListItemIcon>
-                <ListAltIcon />
-              </ListItemIcon>
-              <ListItemText primary="Daftar User" />
-            </ListItemButton>
-          </Link>
+          {user && user.tipeUser === "SPV" && (
+            <Link to="/user" style={linkText}>
+              <ListItemButton sx={listItemButtonStyle}>
+                <ListItemIcon>
+                  <ListAltIcon />
+                </ListItemIcon>
+                <ListItemText primary="Daftar User" />
+              </ListItemButton>
+            </Link>
+          )}
         </List>
       </Collapse>
 
       <Divider />
       {/* Master Button */}
-      <ListItemButton onClick={handleClickMaster}>
-        <ListItemIcon>
-          <KeyIcon />
-        </ListItemIcon>
-        <ListItemText primary="Master" />
-        {openMaster ? (
-          <ExpandLess color="primary" />
-        ) : (
-          <ExpandMore color="primary" />
-        )}
-      </ListItemButton>
-      <Collapse in={openMaster} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <Link to="/supplier" style={linkText}>
-            <ListItemButton sx={listItemButtonStyle}>
-              <ListItemIcon>
-                <AssignmentIcon />
-              </ListItemIcon>
-              <ListItemText primary="Supplier" />
-            </ListItemButton>
-          </Link>
-          <Link to="/groupStok" style={linkText}>
-            <ListItemButton sx={listItemButtonStyle}>
-              <ListItemIcon>
-                <BallotIcon />
-              </ListItemIcon>
-              <ListItemText primary="Group Stok" />
-            </ListItemButton>
-          </Link>
-          <Link to="/stok" style={linkText}>
-            <ListItemButton sx={listItemButtonStyle}>
-              <ListItemIcon>
-                <DnsIcon />
-              </ListItemIcon>
-              <ListItemText primary="Stok" />
-            </ListItemButton>
-          </Link>
-        </List>
-      </Collapse>
+      {user && user.tipeUser === "SPV" && (
+        <>
+          <ListItemButton onClick={handleClickMaster}>
+            <ListItemIcon>
+              <KeyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Master" />
+            {openMaster ? (
+              <ExpandLess color="primary" />
+            ) : (
+              <ExpandMore color="primary" />
+            )}
+          </ListItemButton>
+          <Collapse in={openMaster} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <Link to="/supplier" style={linkText}>
+                <ListItemButton sx={listItemButtonStyle}>
+                  <ListItemIcon>
+                    <AssignmentIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Supplier" />
+                </ListItemButton>
+              </Link>
+              <Link to="/groupStok" style={linkText}>
+                <ListItemButton sx={listItemButtonStyle}>
+                  <ListItemIcon>
+                    <BallotIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Group Stok" />
+                </ListItemButton>
+              </Link>
+              <Link to="/stok" style={linkText}>
+                <ListItemButton sx={listItemButtonStyle}>
+                  <ListItemIcon>
+                    <DnsIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Stok" />
+                </ListItemButton>
+              </Link>
+            </List>
+          </Collapse>
+        </>
+      )}
 
       <Divider />
 
@@ -161,14 +167,16 @@ function SidebarMenu() {
       </ListItemButton>
       <Collapse in={openTransaksi} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          <Link to="/daftarPembelianStok" style={linkText}>
-            <ListItemButton sx={listItemButtonStyle}>
-              <ListItemIcon>
-                <LocalMallIcon />
-              </ListItemIcon>
-              <ListItemText primary="Pembelian Stok" />
-            </ListItemButton>
-          </Link>
+          {user && user.tipeUser === "SPV" && (
+            <Link to="/daftarPembelianStok" style={linkText}>
+              <ListItemButton sx={listItemButtonStyle}>
+                <ListItemIcon>
+                  <LocalMallIcon />
+                </ListItemIcon>
+                <ListItemText primary="Pembelian Stok" />
+              </ListItemButton>
+            </Link>
+          )}
           {user && user.tipeUser === "KSR" ? (
             <Link to="/" style={linkText} onClick={() => newPenjualanStokKSR()}>
               <ListItemButton sx={listItemButtonStyle}>

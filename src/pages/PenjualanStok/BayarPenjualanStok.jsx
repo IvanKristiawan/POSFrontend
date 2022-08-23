@@ -52,9 +52,33 @@ const BayarPenjualanStok = () => {
       });
       downloadPdf(nomorNota, nonTunai, tunai);
       setLoading(false);
-      navigate(`/`);
+      newPenjualanStokKSR();
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const newPenjualanStokKSR = async () => {
+    if (user) {
+      const today = new Date();
+      const date =
+        ("0" + today.getDate()).slice(-2) +
+        "-" +
+        ("0" + (today.getMonth() + 1)).slice(-2) +
+        "-" +
+        today.getFullYear();
+      try {
+        const nextPenjualanStok = await axios.get(
+          `${tempUrl}/penjualanStoksCount`
+        );
+        const response = await axios.post(`${tempUrl}/penjualanStoks`, {
+          nomorNota: nextPenjualanStok.data,
+          tanggal: date
+        });
+        navigate(`/daftarPenjualanStok/penjualanStok/${response.data._id}`);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
