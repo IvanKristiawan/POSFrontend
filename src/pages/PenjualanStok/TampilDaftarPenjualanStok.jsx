@@ -33,8 +33,7 @@ const TampilDaftarPembelianStok = () => {
       return val;
     } else if (
       val.nomorNota.includes(searchTerm) ||
-      val.jenis.toUpperCase().includes(searchTerm.toUpperCase()) ||
-      val.updatedAt.toUpperCase().includes(searchTerm.toUpperCase())
+      val.tanggal.toUpperCase().includes(searchTerm.toUpperCase())
     ) {
       return val;
     }

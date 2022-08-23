@@ -392,7 +392,7 @@ export function ShowTableDaftarPenjualanStok({ currentPosts, searchTerm }) {
                 return val;
               } else if (
                 val.nomorNota.includes(searchTerm) ||
-                val.updatedAt.toUpperCase().includes(searchTerm.toUpperCase())
+                val.tanggal.toUpperCase().includes(searchTerm.toUpperCase())
               ) {
                 return val;
               }
@@ -412,10 +412,7 @@ export function ShowTableDaftarPenjualanStok({ currentPosts, searchTerm }) {
                 <TableCell component="th" scope="row">
                   {user.nomorNota}
                 </TableCell>
-                <TableCell>
-                  {user.updatedAt.slice(8, 10)}-{user.updatedAt.slice(5, 7)}-
-                  {user.updatedAt.slice(0, 4)}
-                </TableCell>
+                <TableCell>{user.tanggal}</TableCell>
                 <TableCell>{user.total.toLocaleString()}</TableCell>
               </TableRow>
             ))}

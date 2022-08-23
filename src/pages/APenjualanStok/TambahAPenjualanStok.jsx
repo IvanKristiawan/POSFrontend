@@ -9,17 +9,21 @@ import {
   TextField,
   Button,
   Divider,
-  Autocomplete
+  Autocomplete,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
 const TambahAPenjualanStok = () => {
   const { id } = useParams();
+  const [open, setOpen] = useState(false);
   const [kodeStok, setKodeStok] = useState("");
   const [namaStok, setNamaStok] = useState("");
   const [barcode, setBarcode] = useState("");
   const [qty, setQty] = useState("");
   const [hargaSatuan, setHargaSatuan] = useState("");
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const [stoks, setStok] = useState([]);
   const [penjualanStoks, setPenjualanStok] = useState([]);
@@ -32,6 +36,13 @@ const TambahAPenjualanStok = () => {
   const barcodeOptions = stoks.map((stok) => ({
     label: `${stok.kodeBarcode}`
   }));
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
     getStoks();
@@ -76,47 +87,53 @@ const TambahAPenjualanStok = () => {
       }
       sumNamaStok += kodeStok.split(" ")[i] + " ";
     }
-    try {
-      setLoading(true);
-      const findByKodeStok = await axios.post(
-        `${tempUrl}/aPenjualanStokByKodeStok`,
-        {
-          nomorNota: penjualanStoks.nomorNota,
-          kodeStok: kodeStok.split(" ", 1)[0]
-        }
-      );
-      if (findByKodeStok.data !== null) {
-        await axios.patch(
-          `${tempUrl}/aPenjualanStoks/${findByKodeStok.data._id}`,
+
+    if (kodeStok.length === 0 || barcode.length === 0 || qty.length === 0) {
+      setError(true);
+      setOpen(!open);
+    } else {
+      try {
+        setLoading(true);
+        const findByKodeStok = await axios.post(
+          `${tempUrl}/aPenjualanStokByKodeStok`,
           {
-            qty: parseInt(findByKodeStok.data.qty) + parseInt(qty),
-            total: parseInt(findByKodeStok.data.total) + hargaSatuan * qty
+            nomorNota: penjualanStoks.nomorNota,
+            kodeStok: kodeStok.split(" ", 1)[0]
           }
         );
-      } else {
-        await axios.post(`${tempUrl}/aPenjualanStoks`, {
-          nomorNota: penjualanStoks.nomorNota,
-          kodeStok: kodeStok.split(" ", 1)[0],
-          namaStok: sumNamaStok,
-          qty,
-          hargaSatuan,
-          total: hargaSatuan * qty
+        if (findByKodeStok.data !== null) {
+          await axios.patch(
+            `${tempUrl}/aPenjualanStoks/${findByKodeStok.data._id}`,
+            {
+              qty: parseInt(findByKodeStok.data.qty) + parseInt(qty),
+              total: parseInt(findByKodeStok.data.total) + hargaSatuan * qty
+            }
+          );
+        } else {
+          await axios.post(`${tempUrl}/aPenjualanStoks`, {
+            nomorNota: penjualanStoks.nomorNota,
+            kodeStok: kodeStok.split(" ", 1)[0],
+            namaStok: sumNamaStok,
+            qty,
+            hargaSatuan,
+            total: hargaSatuan * qty
+          });
+        }
+        await axios.patch(`${tempUrl}/penjualanStoks/${id}`, {
+          total: penjualanStoks.total + hargaSatuan * qty
         });
+        const findStok = stoks.find(
+          (stok) => stok.kodeStok === kodeStok.split(" ", 1)[0]
+        );
+        const newQty = parseInt(findStok.qty) - parseInt(qty);
+        await axios.patch(`${tempUrl}/stoks/${findStok._id}`, {
+          qty: newQty
+        });
+        setLoading(false);
+        navigate(`/daftarPenjualanStok/penjualanStok/${id}`);
+      } catch (error) {
+        console.log(error);
       }
-      await axios.patch(`${tempUrl}/penjualanStoks/${id}`, {
-        total: penjualanStoks.total + hargaSatuan * qty
-      });
-      const findStok = stoks.find(
-        (stok) => stok.kodeStok === kodeStok.split(" ", 1)[0]
-      );
-      const newQty = parseInt(findStok.qty) - parseInt(qty);
-      await axios.patch(`${tempUrl}/stoks/${findStok._id}`, {
-        qty: newQty
-      });
-      setLoading(false);
-      navigate(`/daftarPenjualanStok/penjualanStok/${id}`);
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -138,7 +155,14 @@ const TambahAPenjualanStok = () => {
             id="combo-box-demo"
             options={stokOptions}
             renderInput={(params) => (
-              <TextField {...params} label="Kode Stok" />
+              <TextField
+                error={error && kodeStok.length === 0 && true}
+                helperText={
+                  error && kodeStok.length === 0 && "Kode Stok harus diisi!"
+                }
+                {...params}
+                label="Kode Stok"
+              />
             )}
             onInputChange={(e, value) => {
               setKodeStok(value);
@@ -154,7 +178,16 @@ const TambahAPenjualanStok = () => {
             disablePortal
             id="combo-box-demo"
             options={barcodeOptions}
-            renderInput={(params) => <TextField {...params} label="Barcode" />}
+            renderInput={(params) => (
+              <TextField
+                error={error && barcode.length === 0 && true}
+                helperText={
+                  error && barcode.length === 0 && "Kode Barcode harus diisi!"
+                }
+                {...params}
+                label="Barcode"
+              />
+            )}
             onInputChange={(e, value) => {
               setBarcode(value);
               let findKodeStok = stoks.find(
@@ -169,6 +202,8 @@ const TambahAPenjualanStok = () => {
             sx={textFieldStyle}
           />
           <TextField
+            error={error && qty.length === 0 && true}
+            helperText={error && qty.length === 0 && "Quantity harus diisi!"}
             id="outlined-basic"
             label="Quantity"
             variant="outlined"
@@ -200,6 +235,13 @@ const TambahAPenjualanStok = () => {
         </Button>
       </Box>
       <Divider sx={dividerStyle} />
+      {error && (
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error" sx={alertBox}>
+            Data belum terisi semua!
+          </Alert>
+        </Snackbar>
+      )}
     </Box>
   );
 };
@@ -248,6 +290,6 @@ const hargaText = {
   fontWeight: "600"
 };
 
-const hargaTextField = {
-  display: "flex"
+const alertBox = {
+  width: "100%"
 };

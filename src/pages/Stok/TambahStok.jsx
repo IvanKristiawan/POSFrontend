@@ -12,18 +12,21 @@ import {
   Autocomplete,
   Card,
   CardActionArea,
-  CardMedia
+  CardMedia,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import SaveIcon from "@mui/icons-material/Save";
 import { KeyOffRounded } from "@mui/icons-material";
 
 const TambahStok = () => {
+  const [open, setOpen] = useState(false);
   let [arrayImage, setArrayImage] = useState([]);
   let [arrayImageUrl, setArrayImageUrl] = useState([]);
   let [tempGambarId, setTempGambarId] = useState([]);
   let [tempGambar, setTempGambar] = useState([]);
-  const [kodeGroup, setKodeGroup] = useState();
+  const [kodeGroup, setKodeGroup] = useState("");
   const [kodeStok, setKodeStok] = useState("");
   const [kodeBarcode, setKodeBarcode] = useState("");
   const [namaStok, setNama] = useState("");
@@ -33,9 +36,17 @@ const TambahStok = () => {
   const [konversi, setKonversi] = useState("");
   const [hargaJualKecil, setHargaJualKecil] = useState("");
   const [hargaJualBesar, setHargaJualBesar] = useState("");
+  const [error, setError] = useState(false);
   const [group, setGroup] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
     getGroupStok();
@@ -102,34 +113,47 @@ const TambahStok = () => {
 
   const saveUser = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
 
-    for (let i = 0; i < arrayImage.length; i++) {
-      formData.append("file", arrayImage[i]);
-      formData.append("upload_preset", "pnwyctyw");
-      await saveImage(formData);
-    }
+    if (
+      kodeGroup.length === 0 ||
+      kodeStok.length === 0 ||
+      namaStok.length === 0 ||
+      hargaJualKecil.length === 0 ||
+      hargaJualBesar.length === 0
+    ) {
+      setError(true);
+      setOpen(!open);
+    } else {
+      const formData = new FormData();
 
-    try {
-      setLoading(true);
-      await axios.post(`${tempUrl}/stoks`, {
-        gambarId: tempGambarId,
-        gambar: tempGambar,
-        kodeGroup,
-        kodeStok,
-        kodeBarcode,
-        namaStok,
-        merk,
-        satuanKecil,
-        satuanBesar,
-        konversi,
-        hargaJualKecil,
-        hargaJualBesar
-      });
-      setLoading(false);
-      navigate("/stok");
-    } catch (error) {
-      console.log(error);
+      for (let i = 0; i < arrayImage.length; i++) {
+        formData.append("file", arrayImage[i]);
+        formData.append("upload_preset", "pnwyctyw");
+        await saveImage(formData);
+      }
+      setError(true);
+      setOpen(!open);
+      try {
+        setLoading(true);
+        await axios.post(`${tempUrl}/stoks`, {
+          gambarId: tempGambarId,
+          gambar: tempGambar,
+          kodeGroup,
+          kodeStok,
+          kodeBarcode,
+          namaStok,
+          merk,
+          satuanKecil,
+          satuanBesar,
+          konversi,
+          hargaJualKecil,
+          hargaJualBesar
+        });
+        setLoading(false);
+        navigate("/stok");
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -187,11 +211,22 @@ const TambahStok = () => {
             id="combo-box-demo"
             options={groupStokOptions}
             renderInput={(params) => (
-              <TextField {...params} label="Kode Groups" />
+              <TextField
+                error={error && kodeGroup.length === 0 && true}
+                helperText={
+                  error && kodeGroup.length === 0 && "Kode Group harus diisi!"
+                }
+                {...params}
+                label="Kode Groups"
+              />
             )}
             onInputChange={(e, value) => setKodeGroup(value.split(" ", 1)[0])}
           />
           <TextField
+            error={error && kodeStok.length === 0 && true}
+            helperText={
+              error && kodeStok.length === 0 && "Kode Stok harus diisi!"
+            }
             id="outlined-basic"
             label="Kode"
             variant="outlined"
@@ -211,6 +246,10 @@ const TambahStok = () => {
             onChange={(e) => setKodeBarcode(e.target.value)}
           />
           <TextField
+            error={error && namaStok.length === 0 && true}
+            helperText={
+              error && namaStok.length === 0 && "Nama Stok harus diisi!"
+            }
             id="outlined-basic"
             label="Nama Stok"
             variant="outlined"
@@ -260,6 +299,12 @@ const TambahStok = () => {
                 ` : Rp ${parseInt(hargaJualKecil).toLocaleString()}`}
             </Typography>
             <TextField
+              error={error && hargaJualKecil.length === 0 && true}
+              helperText={
+                error &&
+                hargaJualKecil.length === 0 &&
+                "Harga Jual Kecil Stok harus diisi!"
+              }
               id="outlined-basic"
               variant="outlined"
               size="small"
@@ -276,6 +321,12 @@ const TambahStok = () => {
                 ` : Rp ${parseInt(hargaJualBesar).toLocaleString()}`}
             </Typography>
             <TextField
+              error={error && hargaJualBesar.length === 0 && true}
+              helperText={
+                error &&
+                hargaJualBesar.length === 0 &&
+                "Harga Jual Besar Stok harus diisi!"
+              }
               id="outlined-basic"
               variant="outlined"
               size="small"
@@ -292,6 +343,13 @@ const TambahStok = () => {
         </Button>
       </Box>
       <Divider sx={{ mt: 2 }} />
+      {error && (
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error" sx={alertBox}>
+            Data belum terisi semua!
+          </Alert>
+        </Snackbar>
+      )}
     </Box>
   );
 };
@@ -373,4 +431,8 @@ const hargaText = {
 
 const hargaTextField = {
   display: "flex"
+};
+
+const alertBox = {
+  width: "100%"
 };

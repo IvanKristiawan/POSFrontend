@@ -14,7 +14,9 @@ import {
   CardActionArea,
   CardMedia,
   CardActions,
-  IconButton
+  IconButton,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import Carousel from "react-elastic-carousel";
 import EditIcon from "@mui/icons-material/Edit";
@@ -23,6 +25,7 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { KeyOffRounded } from "@mui/icons-material";
 
 const UbahStok = () => {
+  const [open, setOpen] = useState(false);
   let [arrayImage, setArrayImage] = useState([]);
   let [arrayImageUrl, setArrayImageUrl] = useState([]);
   let [deleteGambarId, setDeleteGambarId] = useState([]);
@@ -40,10 +43,18 @@ const UbahStok = () => {
   const [qty, setQty] = useState("");
   const [hargaJualKecil, setHargaJualKecil] = useState("");
   const [hargaJualBesar, setHargaJualBesar] = useState("");
+  const [error, setError] = useState(false);
   const [group, setGroup] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   const breakPoints = [
     { width: 1, itemsToShow: 1 },
@@ -137,37 +148,49 @@ const UbahStok = () => {
 
   const updateUser = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
 
-    for (let i = 0; i < arrayImage.length; i++) {
-      formData.append("file", arrayImage[i]);
-      formData.append("upload_preset", "pnwyctyw");
-      await saveImage(formData);
-    }
+    if (
+      kodeGroup.length === 0 ||
+      kodeStok.length === 0 ||
+      namaStok.length === 0 ||
+      hargaJualKecil.length === 0 ||
+      hargaJualBesar.length === 0
+    ) {
+      setError(true);
+      setOpen(!open);
+    } else {
+      const formData = new FormData();
 
-    try {
-      setLoading(true);
-      await axios.patch(`${tempUrl}/stoks/${id}`, {
-        deleteGambar,
-        deleteGambarId,
-        gambarId: gambarId,
-        gambar: gambar,
-        kodeGroup,
-        kodeStok,
-        kodeBarcode,
-        namaStok,
-        merk,
-        qty,
-        satuanKecil,
-        satuanBesar,
-        konversi,
-        hargaJualKecil,
-        hargaJualBesar
-      });
-      setLoading(false);
-      navigate("/stok");
-    } catch (error) {
-      console.log(error);
+      for (let i = 0; i < arrayImage.length; i++) {
+        formData.append("file", arrayImage[i]);
+        formData.append("upload_preset", "pnwyctyw");
+        await saveImage(formData);
+      }
+
+      try {
+        setLoading(true);
+        await axios.patch(`${tempUrl}/stoks/${id}`, {
+          deleteGambar,
+          deleteGambarId,
+          gambarId: gambarId,
+          gambar: gambar,
+          kodeGroup,
+          kodeStok,
+          kodeBarcode,
+          namaStok,
+          merk,
+          qty,
+          satuanKecil,
+          satuanBesar,
+          konversi,
+          hargaJualKecil,
+          hargaJualBesar
+        });
+        setLoading(false);
+        navigate("/stok");
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -261,15 +284,27 @@ const UbahStok = () => {
         <Box sx={textFieldWrapper}>
           <Autocomplete
             disablePortal
+            readOnly
             id="combo-box-demo"
             options={groupStokOptions}
             renderInput={(params) => (
-              <TextField {...params} label="Kode Groups" />
+              <TextField
+                error={error && kodeGroup.length === 0 && true}
+                helperText={
+                  error && kodeGroup.length === 0 && "Kode Group harus diisi!"
+                }
+                {...params}
+                label="Kode Groups"
+              />
             )}
             onInputChange={(e, value) => setKodeGroup(value.split(" ", 1)[0])}
             defaultValue={{ label: kodeGroup }}
           />
           <TextField
+            error={error && kodeStok.length === 0 && true}
+            helperText={
+              error && kodeStok.length === 0 && "Kode Stok harus diisi!"
+            }
             id="outlined-basic"
             label="Kode"
             variant="outlined"
@@ -289,6 +324,10 @@ const UbahStok = () => {
             onChange={(e) => setKodeBarcode(e.target.value)}
           />
           <TextField
+            error={error && namaStok.length === 0 && true}
+            helperText={
+              error && namaStok.length === 0 && "Nama Stok harus diisi!"
+            }
             id="outlined-basic"
             label="Nama"
             variant="outlined"
@@ -331,6 +370,12 @@ const UbahStok = () => {
             onChange={(e) => setKonversi(e.target.value)}
           />
           <TextField
+            error={error && hargaJualKecil.length === 0 && true}
+            helperText={
+              error &&
+              hargaJualKecil.length === 0 &&
+              "Harga Jual Kecil Stok harus diisi!"
+            }
             id="outlined-basic"
             label="Harga Jual Kecil"
             variant="outlined"
@@ -339,6 +384,12 @@ const UbahStok = () => {
             onChange={(e) => setHargaJualKecil(e.target.value)}
           />
           <TextField
+            error={error && hargaJualBesar.length === 0 && true}
+            helperText={
+              error &&
+              hargaJualBesar.length === 0 &&
+              "Harga Jual Besar Stok harus diisi!"
+            }
             id="outlined-basic"
             label="Harga Jual Besar"
             variant="outlined"
@@ -358,6 +409,13 @@ const UbahStok = () => {
         </Button>
       </Box>
       <Divider sx={dividerStyle} />
+      {error && (
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error" sx={alertBox}>
+            Data belum terisi semua!
+          </Alert>
+        </Snackbar>
+      )}
     </Box>
   );
 };
@@ -460,4 +518,8 @@ const textFieldBox = {
   display: "flex",
   flex: 1,
   flexDirection: "column"
+};
+
+const alertBox = {
+  width: "100%"
 };

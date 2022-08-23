@@ -250,10 +250,12 @@ const BayarPenjualanStok = () => {
             </Typography>
             <TextField
               error={
+                error &&
                 parseInt(nonTunai) + parseInt(tunai) - parseInt(total) < 0 &&
                 true
               }
               helperText={
+                error &&
                 parseInt(nonTunai) + parseInt(tunai) - parseInt(total) < 0 &&
                 "Jumlah bayar kurang!"
               }
@@ -278,10 +280,12 @@ const BayarPenjualanStok = () => {
             </Typography>
             <TextField
               error={
+                error &&
                 parseInt(nonTunai) + parseInt(tunai) - parseInt(total) < 0 &&
                 true
               }
               helperText={
+                error &&
                 parseInt(nonTunai) + parseInt(tunai) - parseInt(total) < 0 &&
                 "Jumlah bayar kurang!"
               }
@@ -321,7 +325,7 @@ const BayarPenjualanStok = () => {
         </Button>
       </Box>
       <Divider sx={dividerStyle} />
-      {error && error === true && (
+      {error && (
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
           <Alert onClose={handleClose} severity="error" sx={alertBox}>
             Jumlah bayar kurang!

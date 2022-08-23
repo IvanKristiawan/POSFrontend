@@ -13,29 +13,47 @@ import {
   TextField,
   Snackbar
 } from "@mui/material";
-import { useForm } from "react-hook-form";
 import SaveIcon from "@mui/icons-material/Save";
 
 const TambahUser = () => {
   const { user, dispatch } = useContext(AuthContext);
+  const [open, setOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [tipeUser, setTipeUser] = useState("");
   const [kodeNota, setKodeNota] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
   const saveUser = async (e) => {
-    try {
-      const res = await axios.post(`${tempUrl}/auth/register`, {
-        username,
-        password,
-        tipeUser,
-        kodeNota
-      });
-      navigate("/user");
-    } catch (err) {
-      dispatch({ type: "LOGIN_FAILURE", payload: err.response.data });
+    if (
+      username.length === 0 ||
+      password.length === 0 ||
+      tipeUser.length === 0 ||
+      kodeNota.length === 0
+    ) {
+      setError(true);
+      setOpen(!open);
+    } else {
+      try {
+        const res = await axios.post(`${tempUrl}/auth/register`, {
+          username,
+          password,
+          tipeUser,
+          kodeNota
+        });
+        navigate("/user");
+      } catch (err) {
+        dispatch({ type: "LOGIN_FAILURE", payload: err.response.data });
+      }
     }
   };
 
@@ -53,6 +71,10 @@ const TambahUser = () => {
       <Box sx={showDataContainer}>
         <Box sx={showDataWrapper}>
           <TextField
+            error={error && username.length === 0 && true}
+            helperText={
+              error && username.length === 0 && "Username harus diisi!"
+            }
             id="outlined-basic"
             label="Username"
             variant="outlined"
@@ -60,6 +82,10 @@ const TambahUser = () => {
             onChange={(e) => setUsername(e.target.value)}
           />
           <TextField
+            error={error && tipeUser.length === 0 && true}
+            helperText={
+              error && tipeUser.length === 0 && "Tipe User harus diisi!"
+            }
             id="outlined-basic"
             label="Tipe User"
             variant="outlined"
@@ -68,6 +94,10 @@ const TambahUser = () => {
             onChange={(e) => setTipeUser(e.target.value)}
           />
           <TextField
+            error={error && kodeNota.length === 0 && true}
+            helperText={
+              error && kodeNota.length === 0 && "Kode Nota harus diisi!"
+            }
             id="outlined-basic"
             label="Kode Nota"
             variant="outlined"
@@ -76,8 +106,12 @@ const TambahUser = () => {
             onChange={(e) => setKodeNota(e.target.value)}
           />
           <TextField
+            error={error && password.length === 0 && true}
+            helperText={
+              error && password.length === 0 && "Password harus diisi!"
+            }
             id="outlined-basic"
-            label="Password (baru)"
+            label="Password"
             variant="outlined"
             type="password"
             sx={spacingTop}
@@ -92,6 +126,13 @@ const TambahUser = () => {
         </Button>
       </Box>
       <Divider sx={dividerStyle} />
+      {error && (
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error" sx={alertBox}>
+            Data belum terisi semua!
+          </Alert>
+        </Snackbar>
+      )}
     </Box>
   );
 };
@@ -130,4 +171,8 @@ const showDataWrapper = {
 
 const spacingTop = {
   mt: 4
+};
+
+const alertBox = {
+  width: "100%"
 };

@@ -3,20 +3,37 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { tempUrl } from "../../contexts/ContextProvider";
 import { Loader } from "../../components";
-import { Box, Typography, TextField, Button, Divider } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Divider,
+  Snackbar,
+  Alert
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
 const UbahAPenjualanStok = () => {
+  const [open, setOpen] = useState(false);
   const [kodeStok, setKodeStok] = useState("");
   const [oldQty, setOldQty] = useState("");
   const [qty, setQty] = useState("");
   const [hargaSatuan, setHargaSatuan] = useState("");
   const [total, setTotal] = useState("");
   const [penjualanTotal, setPenjualanTotal] = useState("");
+  const [error, setError] = useState(false);
   const [stoks, setStok] = useState([]);
   const navigate = useNavigate();
   const { id, idAPenjualanStok } = useParams();
   const [loading, setLoading] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
     getUserById();
@@ -53,31 +70,37 @@ const UbahAPenjualanStok = () => {
 
   const updateUser = async (e) => {
     e.preventDefault();
-    let newTotal;
-    if (hargaSatuan * qty === total) {
-      newTotal = penjualanTotal;
+
+    if (qty.length === 0) {
+      setError(true);
+      setOpen(!open);
     } else {
-      newTotal = penjualanTotal + (hargaSatuan * qty - total);
-    }
-    try {
-      setLoading(true);
-      await axios.patch(`${tempUrl}/penjualanStoks/${id}`, {
-        total: hargaSatuan * qty
-      });
-      await axios.patch(`${tempUrl}/aPenjualanStoks/${idAPenjualanStok}`, {
-        qty,
-        total: newTotal
-      });
-      const findStok = stoks.find((stok) => stok.kodeStok === kodeStok);
-      const countQty = qty - oldQty;
-      const newQty = parseInt(findStok.qty) - parseInt(countQty);
-      await axios.patch(`${tempUrl}/stoks/${findStok._id}`, {
-        qty: newQty
-      });
-      setLoading(false);
-      navigate(`/daftarPenjualanStok/penjualanStok/${id}`);
-    } catch (error) {
-      console.log(error);
+      let newTotal;
+      if (hargaSatuan * qty === total) {
+        newTotal = penjualanTotal;
+      } else {
+        newTotal = penjualanTotal + (hargaSatuan * qty - total);
+      }
+      try {
+        setLoading(true);
+        await axios.patch(`${tempUrl}/penjualanStoks/${id}`, {
+          total: hargaSatuan * qty
+        });
+        await axios.patch(`${tempUrl}/aPenjualanStoks/${idAPenjualanStok}`, {
+          qty,
+          total: newTotal
+        });
+        const findStok = stoks.find((stok) => stok.kodeStok === kodeStok);
+        const countQty = qty - oldQty;
+        const newQty = parseInt(findStok.qty) - parseInt(countQty);
+        await axios.patch(`${tempUrl}/stoks/${findStok._id}`, {
+          qty: newQty
+        });
+        setLoading(false);
+        navigate(`/daftarPenjualanStok/penjualanStok/${id}`);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -95,6 +118,8 @@ const UbahAPenjualanStok = () => {
       <Box sx={showDataContainer}>
         <Box sx={showDataWrapper}>
           <TextField
+            error={error && qty.length === 0 && true}
+            helperText={error && qty.length === 0 && "Quantity harus diisi!"}
             id="outlined-basic"
             label="Quantity"
             variant="outlined"
@@ -129,6 +154,13 @@ const UbahAPenjualanStok = () => {
         </Button>
       </Box>
       <Divider sx={dividerStyle} />
+      {error && (
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error" sx={alertBox}>
+            Data belum terisi semua!
+          </Alert>
+        </Snackbar>
+      )}
     </Box>
   );
 };
@@ -170,17 +202,14 @@ const textFieldStyle = {
   mt: 4
 };
 
-const textFieldResponsive = {
-  mt: {
-    xs: 4,
-    sm: 0
-  }
-};
-
 const hargaContainer = {
   marginTop: 2.5
 };
 
 const hargaText = {
   fontWeight: "600"
+};
+
+const alertBox = {
+  width: "100%"
 };

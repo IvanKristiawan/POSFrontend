@@ -9,17 +9,20 @@ import {
   TextField,
   Button,
   Divider,
-  Autocomplete
+  Autocomplete,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 
 const TambahAPembelianStok = () => {
   const { id } = useParams();
+  const [open, setOpen] = useState(false);
   const [kodeStok, setKodeStok] = useState("");
   const [qty, setQty] = useState("");
   const [hargaSatuan, setHargaSatuan] = useState("");
   const [potongan, setPotongan] = useState("");
-  const [subtotal, setSubTotal] = useState(0);
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const [stoks, setStok] = useState([]);
   const [pembelianStoks, setPembelianStok] = useState([]);
@@ -28,6 +31,13 @@ const TambahAPembelianStok = () => {
   const stokOptions = stoks.map((stok) => ({
     label: `${stok.kodeStok} - ${stok.namaStok}`
   }));
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
     getStoks();
@@ -50,31 +60,36 @@ const TambahAPembelianStok = () => {
 
   const saveUser = async (e) => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      await axios.post(`${tempUrl}/aPembelianStoks`, {
-        nomorNota: pembelianStoks.nomorNota,
-        kodeStok,
-        qty,
-        hargaSatuan,
-        potongan,
-        subtotal: hargaSatuan * qty - (hargaSatuan * qty * potongan) / 100
-      });
-      await axios.patch(`${tempUrl}/pembelianStoks/${id}`, {
-        total:
-          pembelianStoks.total +
-          hargaSatuan * qty -
-          (hargaSatuan * qty * potongan) / 100
-      });
-      const findStok = stoks.find((stok) => stok.kodeStok === kodeStok);
-      const newQty = parseInt(findStok.qty) + parseInt(qty);
-      await axios.patch(`${tempUrl}/stoks/${findStok._id}`, {
-        qty: newQty
-      });
-      setLoading(false);
-      navigate(`/daftarPembelianStok/pembelianStok/${id}`);
-    } catch (error) {
-      console.log(error);
+    if (kodeStok.length === 0 || qty.length === 0 || hargaSatuan.length === 0) {
+      setError(true);
+      setOpen(!open);
+    } else {
+      try {
+        setLoading(true);
+        await axios.post(`${tempUrl}/aPembelianStoks`, {
+          nomorNota: pembelianStoks.nomorNota,
+          kodeStok,
+          qty,
+          hargaSatuan,
+          potongan,
+          subtotal: hargaSatuan * qty - (hargaSatuan * qty * potongan) / 100
+        });
+        await axios.patch(`${tempUrl}/pembelianStoks/${id}`, {
+          total:
+            pembelianStoks.total +
+            hargaSatuan * qty -
+            (hargaSatuan * qty * potongan) / 100
+        });
+        const findStok = stoks.find((stok) => stok.kodeStok === kodeStok);
+        const newQty = parseInt(findStok.qty) + parseInt(qty);
+        await axios.patch(`${tempUrl}/stoks/${findStok._id}`, {
+          qty: newQty
+        });
+        setLoading(false);
+        navigate(`/daftarPembelianStok/pembelianStok/${id}`);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -96,12 +111,21 @@ const TambahAPembelianStok = () => {
             id="combo-box-demo"
             options={stokOptions}
             renderInput={(params) => (
-              <TextField {...params} label="Kode Stok" />
+              <TextField
+                error={error && kodeStok.length === 0 && true}
+                helperText={
+                  error && kodeStok.length === 0 && "Kode Stok harus diisi!"
+                }
+                {...params}
+                label="Kode Stok"
+              />
             )}
             onInputChange={(e, value) => setKodeStok(value.split(" ", 1)[0])}
             sx={textFieldStyle}
           />
           <TextField
+            error={error && qty.length === 0 && true}
+            helperText={error && qty.length === 0 && "Quantity harus diisi!"}
             id="outlined-basic"
             label="Quantity"
             variant="outlined"
@@ -117,6 +141,10 @@ const TambahAPembelianStok = () => {
                 ` : Rp ${parseInt(hargaSatuan).toLocaleString()}`}
             </Typography>
             <TextField
+              error={error && hargaSatuan.length === 0 && true}
+              helperText={
+                error && hargaSatuan.length === 0 && "Harga Satuan harus diisi!"
+              }
               id="outlined-basic"
               variant="outlined"
               size="small"
@@ -155,6 +183,13 @@ const TambahAPembelianStok = () => {
         </Button>
       </Box>
       <Divider sx={dividerStyle} />
+      {error && (
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error" sx={alertBox}>
+            Data belum terisi semua!
+          </Alert>
+        </Snackbar>
+      )}
     </Box>
   );
 };
@@ -210,4 +245,8 @@ const hargaTextField = {
 
 const subTotalText = {
   fontWeight: "600"
+};
+
+const alertBox = {
+  width: "100%"
 };
