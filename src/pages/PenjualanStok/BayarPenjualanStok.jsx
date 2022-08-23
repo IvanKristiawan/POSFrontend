@@ -2,7 +2,15 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Box, TextField, Typography, Divider, Button } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Typography,
+  Divider,
+  Button,
+  Snackbar,
+  Alert
+} from "@mui/material";
 import { Loader } from "../../components";
 import { tempUrl } from "../../contexts/ContextProvider";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
@@ -12,6 +20,7 @@ const BayarPenjualanStok = () => {
   const { user, dispatch } = useContext(AuthContext);
   const location = useLocation();
   const id = location.pathname.split("/")[3];
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [nomorNota, setNomorNota] = useState("");
   const [tanggal, setTanggal] = useState("");
@@ -19,7 +28,15 @@ const BayarPenjualanStok = () => {
   const [nonTunai, setNonTunai] = useState(0);
   const [tunai, setTunai] = useState(0);
   const [kembali, setKembali] = useState("");
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
     id && getUserById();
@@ -39,20 +56,30 @@ const BayarPenjualanStok = () => {
 
   const saveUser = async (e) => {
     try {
-      setLoading(true);
-      const response = await axios.patch(`${tempUrl}/penjualanStoks/${id}`, {
-        nomorNota,
-        tanggal,
-        total,
-        nonTunai,
-        tunai,
-        kembali: !isNaN(parseInt(nonTunai) + parseInt(tunai) - parseInt(total))
-          ? parseInt(nonTunai) + parseInt(tunai) - parseInt(total)
-          : 0
-      });
-      downloadPdf(nomorNota, nonTunai, tunai);
-      setLoading(false);
-      newPenjualanStokKSR();
+      if (
+        parseInt(nonTunai) + parseInt(tunai) - parseInt(total) < 0 ||
+        isNaN(parseInt(nonTunai) + parseInt(tunai) - parseInt(total))
+      ) {
+        setError(true);
+        setOpen(!open);
+      } else {
+        setLoading(true);
+        const response = await axios.patch(`${tempUrl}/penjualanStoks/${id}`, {
+          nomorNota,
+          tanggal,
+          total,
+          nonTunai,
+          tunai,
+          kembali: !isNaN(
+            parseInt(nonTunai) + parseInt(tunai) - parseInt(total)
+          )
+            ? parseInt(nonTunai) + parseInt(tunai) - parseInt(total)
+            : 0
+        });
+        downloadPdf(nomorNota, nonTunai, tunai);
+        setLoading(false);
+        newPenjualanStokKSR();
+      }
     } catch (error) {
       console.log(error);
     }
@@ -222,12 +249,24 @@ const BayarPenjualanStok = () => {
                 ` Rp ${parseInt(nonTunai).toLocaleString()}`}
             </Typography>
             <TextField
+              error={
+                parseInt(nonTunai) + parseInt(tunai) - parseInt(total) < 0 &&
+                true
+              }
+              helperText={
+                parseInt(nonTunai) + parseInt(tunai) - parseInt(total) < 0 &&
+                "Jumlah bayar kurang!"
+              }
               id="outlined-basic"
               variant="outlined"
               size="small"
               sx={hargaTextField}
               value={nonTunai === 0 ? "" : nonTunai}
-              onChange={(e) => setNonTunai(e.target.value)}
+              onChange={(e) => {
+                e.target.value !== ""
+                  ? setNonTunai(e.target.value)
+                  : setNonTunai(0);
+              }}
             />
           </Box>
           <Box sx={hargaContainer}>
@@ -238,12 +277,22 @@ const BayarPenjualanStok = () => {
                 ` Rp ${parseInt(tunai).toLocaleString()}`}
             </Typography>
             <TextField
+              error={
+                parseInt(nonTunai) + parseInt(tunai) - parseInt(total) < 0 &&
+                true
+              }
+              helperText={
+                parseInt(nonTunai) + parseInt(tunai) - parseInt(total) < 0 &&
+                "Jumlah bayar kurang!"
+              }
               id="outlined-basic"
               variant="outlined"
               size="small"
               sx={hargaTextField}
               value={tunai === 0 ? "" : tunai}
-              onChange={(e) => setTunai(e.target.value)}
+              onChange={(e) => {
+                e.target.value !== "" ? setTunai(e.target.value) : setTunai(0);
+              }}
             />
           </Box>
           <Box sx={{ marginTop: 4 }}>
@@ -272,6 +321,13 @@ const BayarPenjualanStok = () => {
         </Button>
       </Box>
       <Divider sx={dividerStyle} />
+      {error && error === true && (
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error" sx={alertBox}>
+            Jumlah bayar kurang!
+          </Alert>
+        </Snackbar>
+      )}
     </Box>
   );
 };
@@ -337,4 +393,8 @@ const hargaText = {
 
 const hargaTextField = {
   display: "flex"
+};
+
+const alertBox = {
+  width: "100%"
 };

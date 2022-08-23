@@ -166,7 +166,7 @@ const TampilPenjualanStok = () => {
             InputProps={{
               readOnly: true
             }}
-            value={total.toLocaleString()}
+            value={total && total.toLocaleString()}
           />
         </Box>
         <Box sx={textFieldBox}>
@@ -178,7 +178,7 @@ const TampilPenjualanStok = () => {
             InputProps={{
               readOnly: true
             }}
-            value={nonTunai.toLocaleString()}
+            value={nonTunai && nonTunai.toLocaleString()}
           />
           <TextField
             id="outlined-basic"
@@ -188,7 +188,7 @@ const TampilPenjualanStok = () => {
             InputProps={{
               readOnly: true
             }}
-            value={tunai.toLocaleString()}
+            value={tunai && tunai.toLocaleString()}
           />
           <TextField
             id="outlined-basic"
@@ -198,7 +198,7 @@ const TampilPenjualanStok = () => {
             InputProps={{
               readOnly: true
             }}
-            value={kembali.toLocaleString()}
+            value={kembali && kembali.toLocaleString()}
           />
         </Box>
       </Box>
