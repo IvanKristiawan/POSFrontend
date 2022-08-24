@@ -459,7 +459,14 @@ export default function App() {
               }
             />
             {/* Laporan Klerekan */}
-            <Route path="/laporanKlerekan" element={<LaporanKlerekan />} />
+            <Route
+              path="/laporanKlerekan"
+              element={
+                <SPVRoute>
+                  <LaporanKlerekan />
+                </SPVRoute>
+              }
+            />
             {/* Not Authorized */}
             <Route path="/unauthorized" element={<ProtectedRoute />} />
           </Routes>
