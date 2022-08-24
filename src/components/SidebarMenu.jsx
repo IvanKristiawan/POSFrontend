@@ -24,6 +24,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import ListAltIcon from "@mui/icons-material/ListAlt";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import LocalAtmRoundedIcon from "@mui/icons-material/LocalAtmRounded";
 
 function SidebarMenu() {
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ function SidebarMenu() {
   const [openUtility, setOpenUtility] = React.useState(false);
   const [openMaster, setOpenMaster] = React.useState(false);
   const [openTransaksi, setOpenTransaksi] = React.useState(false);
+  const [openLaporan, setOpenLaporan] = React.useState(false);
 
   const handleClickUtility = () => {
     setOpenUtility(!openUtility);
@@ -42,6 +45,10 @@ function SidebarMenu() {
 
   const handleClickTransaksi = () => {
     setOpenTransaksi(!openTransaksi);
+  };
+
+  const handleClickLaporan = () => {
+    setOpenLaporan(!openLaporan);
   };
 
   const newPenjualanStokKSR = async () => {
@@ -198,6 +205,41 @@ function SidebarMenu() {
           )}
         </List>
       </Collapse>
+
+      <Divider />
+
+      {/* Laporan Button */}
+      {user && user.tipeUser === "SPV" && (
+        <>
+          <ListItemButton onClick={handleClickLaporan}>
+            <ListItemIcon>
+              <AssessmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Laporan" />
+            {openLaporan ? (
+              <ExpandLess color="primary" />
+            ) : (
+              <ExpandMore color="primary" />
+            )}
+          </ListItemButton>
+          <Collapse in={openLaporan} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {user && user.tipeUser === "SPV" && (
+                <Link to="/laporanKlerekan" style={linkText}>
+                  <ListItemButton sx={listItemButtonStyle}>
+                    <ListItemIcon>
+                      <LocalAtmRoundedIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Klerekan" />
+                  </ListItemButton>
+                </Link>
+              )}
+            </List>
+          </Collapse>
+        </>
+      )}
+
+      <Divider />
     </ListItem>
   );
 }

@@ -65,6 +65,7 @@ const BayarPenjualanStok = () => {
       } else {
         setLoading(true);
         const response = await axios.patch(`${tempUrl}/penjualanStoks/${id}`, {
+          username: user.username,
           nomorNota,
           tanggal,
           total,

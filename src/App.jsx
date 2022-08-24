@@ -44,7 +44,8 @@ import {
   TambahUser,
   ProfilUser,
   UbahProfilUser,
-  ProtectedRoute
+  ProtectedRoute,
+  LaporanKlerekan
 } from "./pages/index";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -457,6 +458,8 @@ export default function App() {
                 </SPVRoute>
               }
             />
+            {/* Laporan Klerekan */}
+            <Route path="/laporanKlerekan" element={<LaporanKlerekan />} />
             {/* Not Authorized */}
             <Route path="/unauthorized" element={<ProtectedRoute />} />
           </Routes>

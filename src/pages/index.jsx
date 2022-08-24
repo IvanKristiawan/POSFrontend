@@ -37,3 +37,5 @@ export { default as ProfilUser } from "./ProfilUser/ProfilUser";
 export { default as UbahProfilUser } from "./ProfilUser/UbahProfilUser";
 // Protected Route
 export { default as ProtectedRoute } from "./ProtectedRoute/ProtectedRoute";
+// Laporan Klerekan
+export { default as LaporanKlerekan } from "./LaporanKlerekan/LaporanKlerekan";
