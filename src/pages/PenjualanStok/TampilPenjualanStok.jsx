@@ -7,7 +7,9 @@ import {
   Typography,
   Divider,
   Pagination,
-  Button
+  Button,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import { ShowTablePenjualanStok } from "../../components/ShowTable";
 import { Loader, usePagination, ButtonModifier } from "../../components";
@@ -25,6 +27,8 @@ const TampilPenjualanStok = () => {
   const [nonTunai, setNonTunai] = useState("");
   const [tunai, setTunai] = useState("");
   const [kembali, setKembali] = useState("");
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState(false);
   const [aPenjualanStoks, setAPenjualanStok] = useState([]);
   const [stoks, setStoks] = useState([]);
   const navigate = useNavigate();
@@ -104,6 +108,22 @@ const TampilPenjualanStok = () => {
     }
   };
 
+  const bayarNota = (id) => {
+    if (parseInt(total) <= 0) {
+      setError(true);
+      setOpen(!open);
+    } else {
+      navigate(`/daftarPenjualanStok/penjualanStok/${id}/bayar`);
+    }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
   if (loading) {
     return <Loader />;
   }
@@ -120,9 +140,7 @@ const TampilPenjualanStok = () => {
           variant="contained"
           startIcon={<PointOfSaleIcon />}
           sx={bayarButton}
-          onClick={() => {
-            navigate(`/daftarPenjualanStok/penjualanStok/${id}/bayar`);
-          }}
+          onClick={() => bayarNota(id)}
         >
           Bayar
         </Button>
@@ -220,6 +238,13 @@ const TampilPenjualanStok = () => {
           size={screenSize <= 600 ? "small" : "large"}
         />
       </Box>
+      {error && (
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error" sx={alertBox}>
+            Belum Ada Barang yang Dibeli!
+          </Alert>
+        </Snackbar>
+      )}
     </Box>
   );
 };
@@ -282,4 +307,8 @@ const tableContainer = {
 
 const bayarButton = {
   textTransform: "none"
+};
+
+const alertBox = {
+  width: "100%"
 };
