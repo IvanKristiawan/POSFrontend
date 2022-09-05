@@ -1,7 +1,6 @@
 {
   "name": "posfrontendforked3",
   "version": "1.0.0",
-  "homepage": "https://itkitapro.com/posbes",
   "engines": {
     "node": "14.x"
   },
